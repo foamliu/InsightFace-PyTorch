@@ -14,13 +14,6 @@ from config import device
 from data_gen import data_transforms
 from utils import align_face, get_central_face_attributes
 
-checkpoint = 'BEST_checkpoint.tar'
-print('loading model: {}...'.format(checkpoint))
-checkpoint = torch.load(checkpoint)
-model = checkpoint['model'].to(device)
-model.eval()
-transformer = data_transforms['val']
-
 
 def walkdir(folder, ext):
     # Walk through each files in a directory
@@ -55,7 +48,17 @@ def crop(path, oldkey, newkey):
     print('{} images were cropped successfully.'.format(filecounter))
 
 
-def gen_feature(path):
+def gen_feature(path, model=None):
+    transformer = data_transforms['val']
+
+    if model is None:
+        checkpoint = 'BEST_checkpoint.tar'
+        print('loading model: {}...'.format(checkpoint))
+        checkpoint = torch.load(checkpoint)
+        model = checkpoint['model'].to(device)
+
+    model.eval()
+
     print('gen features {}...'.format(path))
     # Preprocess the total files count
     files = []

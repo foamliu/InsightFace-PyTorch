@@ -1,6 +1,9 @@
 import subprocess
 
-if __name__ == '__main__':
+from megaface_utils import gen_feature, remove_noise
+
+
+def megaface_test(model):
     cmd = 'find megaface/facescrub_images -name "*.bin" -type f -delete'
     print(cmd)
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
@@ -11,17 +14,11 @@ if __name__ == '__main__':
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
     print(output)
 
-    cmd = 'python3 megaface.py --action gen_features'
-    print(cmd)
-    output = subprocess.check_output(cmd, shell=True).decode("utf-8")
-    print(output)
+    gen_feature('megaface/facescrub_images', model)
+    gen_feature('megaface/MegaFace_aligned/FlickrFinal2', model)
+    remove_noise()
 
-    cmd = 'python3 megaface.py --action gen_features'
-    print(cmd)
-    output = subprocess.check_output(cmd, shell=True).decode("utf-8")
-    print(output)
-
-    cmd = 'python run_experiment.py -p /dev/code/mnt/InsightFace-v3/megaface/devkit/templatelists/facescrub_uncropped_features_list.json /dev/code/mnt/InsightFace-v3/megaface/MegaFace_aligned/FlickrFinal2 /dev/code/mnt/InsightFace-v3/megaface/facescrub_images _0.bin results -s 1000000'
+    cmd = 'python megaface/devkit/experiments/run_experiment.py -p megaface/devkit/templatelists/facescrub_uncropped_features_list.json megaface/MegaFace_aligned/FlickrFinal2 megaface/facescrub_images _0.bin results -s 1000000'
     print(cmd)
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
     print(output)
@@ -29,4 +26,8 @@ if __name__ == '__main__':
     lines = output.split('\n')
     line = [l for l in lines if l.startswith('Rank 1: ')][0]
     accuracy = float(line[8:])
-    print(accuracy)
+    return accuracy
+
+
+if __name__ == '__main__':
+    megaface_test(None)

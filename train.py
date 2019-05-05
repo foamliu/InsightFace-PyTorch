@@ -11,7 +11,7 @@ from torch.optim.lr_scheduler import StepLR
 from config import device, grad_clip, print_freq
 from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
-from lfw_eval import lfw_test
+from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, MobileNet, resnet_face18, ArcMarginModel
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger
 
@@ -92,11 +92,6 @@ def train_net(args):
     for epoch in range(start_epoch, args.end_epoch):
         scheduler.step()
 
-        if args.full_log:
-            lfw_acc, threshold = lfw_test(model)
-            writer.add_scalar('LFW_Accuracy', lfw_acc, epoch)
-            full_log(epoch)
-
         start = datetime.now()
         # One epoch's training
         train_loss, train_top5_accs = train(train_loader=train_loader,
@@ -115,12 +110,12 @@ def train_net(args):
         print('{} seconds'.format(delta.seconds))
 
         # One epoch's validation
-        lfw_acc, threshold = lfw_test(model)
-        writer.add_scalar('LFW_Accuracy', lfw_acc, epoch)
+        megaface_acc = megaface_test(model)
+        writer.add_scalar('MegaFace_Accuracy', megaface_acc, epoch)
 
         # Check if there was an improvement
-        is_best = lfw_acc > best_acc
-        best_acc = max(lfw_acc, best_acc)
+        is_best = megaface_acc > best_acc
+        best_acc = max(megaface_acc, best_acc)
         if not is_best:
             epochs_since_improvement += 1
             print("\nEpochs since last improvement: %d\n" % (epochs_since_improvement,))
