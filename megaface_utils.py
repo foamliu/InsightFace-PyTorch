@@ -124,7 +124,7 @@ def remove_noise():
             if f.replace('_', '').replace(' ', '') in noise:
                 filename = os.path.join(root, f)
                 if os.path.exists(filename):
-                    print(filename)
+                    # print(filename)
                     os.remove(filename)
 
 

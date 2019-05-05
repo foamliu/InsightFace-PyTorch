@@ -8,12 +8,12 @@ import sys
 import json
 import random
 import subprocess
-
-MODEL = os.path.join('..', 'models', 'jb_identity.bin')
-IDENTIFICATION_EXE = os.path.join('..', 'bin', 'Identification')
-FUSE_RESULTS_EXE = os.path.join('..', 'bin', 'FuseResults')
-MEGAFACE_LIST_BASENAME = os.path.join('..','templatelists','megaface_features_list.json')
-PROBE_LIST_BASENAME = os.path.join('..','templatelists','facescrub_features_list.json')
+ROOT = 'megaface/devkit'
+MODEL = os.path.join(ROOT, 'models', 'jb_identity.bin')
+IDENTIFICATION_EXE = os.path.join(ROOT, 'bin', 'Identification')
+FUSE_RESULTS_EXE = os.path.join(ROOT, 'bin', 'FuseResults')
+MEGAFACE_LIST_BASENAME = os.path.join(ROOT,'templatelists','megaface_features_list.json')
+PROBE_LIST_BASENAME = os.path.join(ROOT,'templatelists','facescrub_features_list.json')
 
 def main():
     parser = argparse.ArgumentParser(description=
