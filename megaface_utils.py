@@ -113,7 +113,7 @@ def remove_noise():
     for line in open('megaface/megaface_noises.txt', 'r'):
         filename = 'megaface/MegaFace_aligned/FlickrFinal2/' + line.strip() + '_0.bin'
         if os.path.exists(filename):
-            print(filename)
+            # print(filename)
             os.remove(filename)
 
     noise = set()
