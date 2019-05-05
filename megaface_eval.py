@@ -1,4 +1,3 @@
-import os
 import subprocess
 
 if __name__ == '__main__':
@@ -21,3 +20,8 @@ if __name__ == '__main__':
     cmd = 'python run_experiment.py -p /dev/code/mnt/InsightFace-v3/megaface/devkit/templatelists/facescrub_uncropped_features_list.json /dev/code/mnt/InsightFace-v3/megaface/MegaFace_aligned/FlickrFinal2 /dev/code/mnt/InsightFace-v3/megaface/facescrub_images _0.bin results -s 1000000'
     result = subprocess.run([cmd], stdout=subprocess.PIPE)
     print(result.stdout)
+
+    lines = result.stdout.split('\n')
+    line = [l for l in lines if l.startswith('Rank 1: ')]
+    accuracy = float(line[8:])
+    print(accuracy)
