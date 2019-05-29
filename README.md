@@ -81,31 +81,19 @@ Challenge 1 is taken to test our model with 1 million distractors.
 ```bash
 $ tar -vxf linux-devkit.tar.gz
 ```
- 
-#### Generate features
-
-1. Crop MegaFace.
-2. Generate features for FaceScrub and MegaFace.
-3. Remove noises. 
-Note: we used the noises list proposed by InsightFace, at https://github.com/deepinsight/insightface.
-
-```bash
-$ python3 megaface.py --action crop_megaface
-
-$ find megaface/facescrub_images -name "*.bin" -type f -delete
-$ find megaface/MegaFace_aligned/FlickrFinal2 -name "*.bin" -type f -delete
-
-$ python3 megaface.py --action gen_features
-```
 
 #### Evaluation
 
-Start MegaFace evaluation through devkit: 
-
 ```bash
-$ cd megaface/devkit/experiments
-$ python run_experiment.py -p /dev/code/mnt/InsightFace-v2/megaface/devkit/templatelists/facescrub_uncropped_features_list.json /dev/code/mnt/InsightFace-v2/megaface/MegaFace_aligned/FlickrFinal2 /dev/code/mnt/InsightFace-v2/megaface/facescrub_images _0.bin results -s 1000000
+$ python3 megaface_eval.py
 ```
+
+It does following things:
+1. Crop MegaFace.
+2. Generate features for FaceScrub and MegaFace.
+3. Remove noises. 
+<br>Note: we used the noises list proposed by InsightFace, at https://github.com/deepinsight/insightface.
+4. Start MegaFace evaluation through devkit. 
 
 #### Results
 
