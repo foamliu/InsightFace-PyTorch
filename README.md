@@ -103,8 +103,8 @@ Draw curves with matlab script @ megaface/draw_curve.m.
 
 CMC|ROC|
 |---|---|
-|![image](https://github.com/foamliu/InsightFace-v2/raw/master/images/megaface_cmc.jpg)|![image](https://github.com/foamliu/InsightFace-v2/raw/master/images/megaface_roc.jpg)|
-|![image](https://github.com/foamliu/InsightFace-v2/raw/master/images/megaface_cmc_2.jpg)|![image](https://github.com/foamliu/InsightFace-v2/raw/master/images/megaface_roc_2.jpg)|
+|![image](https://github.com/foamliu/InsightFace-v3/raw/master/images/megaface_cmc.jpg)|![image](https://github.com/foamliu/InsightFace-v3/raw/master/images/megaface_roc.jpg)|
+|![image](https://github.com/foamliu/InsightFace-v3/raw/master/images/megaface_cmc_2.jpg)|![image](https://github.com/foamliu/InsightFace-v3/raw/master/images/megaface_roc_2.jpg)|
 
 ##### Textual results
 <pre>
