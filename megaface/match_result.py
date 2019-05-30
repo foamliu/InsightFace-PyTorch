@@ -32,7 +32,7 @@ def match_result():
 
 def check_facescrub():
     num_bins = 0
-    folder = '../facescrub_images'
+    folder = 'facescrub_images'
     dir_list = [d for d in os.listdir(folder)]
     for d in dir_list:
         str_dir = os.path.join(folder, d)
