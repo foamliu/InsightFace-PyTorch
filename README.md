@@ -110,7 +110,6 @@ CMC|ROC|
 <pre>
 Done matching! Score matrix size: 3379 972313
 Saving to results/otherFiles/facescrub_megaface_0_1000000_1.bin
-Computing test results with 1000000 images for set 1
 Loaded 3379 probes spanning 80 classes
 Loading from results/otherFiles/facescrub_facescrub_0.bin
 Probe score matrix size: 3379 3379
@@ -122,6 +121,7 @@ Making gallery!
 Done Making Gallery!
 Allocating ranks (972393)
 
-Rank 1: 0.964733
+Rank 1: 0.966381
+
 </pre>
 
