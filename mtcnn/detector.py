@@ -10,7 +10,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def detect_faces(image, min_face_size=20.0,
-                 thresholds=[0.6, 0.7, 0.8],
+                 thresholds=[0.6, 0.7, 0.7],
                  nms_thresholds=[0.7, 0.7, 0.7]):
     """
     Arguments:
@@ -35,7 +35,7 @@ def detect_faces(image, min_face_size=20.0,
         min_length = min(height, width)
 
         min_detection_size = 12
-        factor = 0.707  # sqrt(0.5)
+        factor = 0.709  # sqrt(0.5)
 
         # scales for scaling the image
         scales = []
