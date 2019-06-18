@@ -42,5 +42,5 @@ def check_facescrub():
 
 
 if __name__ == '__main__':
-    # match_result()
-    check_facescrub()
+    match_result()
+    # check_facescrub()
