@@ -6,14 +6,16 @@ import numpy as np
 import torch
 from tensorboardX import SummaryWriter
 from torch import nn
-from torch.optim.lr_scheduler import StepLR
 
 from config import device, grad_clip, print_freq
 from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
 from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, MobileNet, resnet_face18, ArcMarginModel
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger, adjust_learning_rate
+
+
+# from torch.optim.lr_scheduler import StepLR
 
 
 def full_log(epoch):
@@ -86,11 +88,17 @@ def train_net(args):
     train_dataset = ArcFaceDataset('train')
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4)
 
-    scheduler = StepLR(optimizer, step_size=args.lr_step, gamma=0.1)
+    # scheduler = StepLR(optimizer, step_size=args.lr_step, gamma=0.1)
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        scheduler.step(epoch)
+        # scheduler.step(epoch)
+
+        # Decay learning rate if there is no improvement for 2 consecutive epochs, and terminate training after 10
+        if epochs_since_improvement == 10:
+            break
+        if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
+            adjust_learning_rate(optimizer, 0.5)
 
         start = datetime.now()
         # One epoch's training
