@@ -86,7 +86,7 @@ def train_net(args):
 
     # Custom dataloaders
     train_dataset = ArcFaceDataset('train')
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=8)
 
     # scheduler = StepLR(optimizer, step_size=args.lr_step, gamma=0.1)
 
