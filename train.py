@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 from shutil import copyfile
 
 import numpy as np
@@ -12,7 +11,8 @@ from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
 from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, MobileNet, resnet_face18, ArcMarginModel
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger, adjust_learning_rate
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger, adjust_learning_rate, \
+    get_learning_rate
 
 
 # from torch.optim.lr_scheduler import StepLR
@@ -100,7 +100,6 @@ def train_net(args):
         if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
             adjust_learning_rate(optimizer, 0.5)
 
-        start = datetime.now()
         # One epoch's training
         train_loss, train_top5_accs = train(train_loader=train_loader,
                                             model=model,
@@ -109,13 +108,11 @@ def train_net(args):
                                             optimizer=optimizer,
                                             epoch=epoch,
                                             logger=logger)
+        effective_lr = get_learning_rate(optimizer)
+        print('Current effective learning rate: {}\n'.format(effective_lr))
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
         writer.add_scalar('Train_Top5_Accuracy', train_top5_accs, epoch)
-
-        end = datetime.now()
-        delta = end - start
-        print('{} seconds'.format(delta.seconds))
 
         # One epoch's validation
         megaface_acc = megaface_test(model)

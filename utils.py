@@ -73,6 +73,11 @@ def adjust_learning_rate(optimizer, shrink_factor):
     print("The new learning rate is %f\n" % (optimizer.param_groups[0]['lr'],))
 
 
+def get_learning_rate(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
+
 def accuracy(scores, targets, k=1):
     batch_size = targets.size(0)
     _, ind = scores.topk(k, 1, True, True)
@@ -82,7 +87,7 @@ def accuracy(scores, targets, k=1):
 
 
 def align_face(img_fn, facial5points):
-    raw = cv.imread(img_fn, True)   # BGR
+    raw = cv.imread(img_fn, True)  # BGR
     facial5points = np.reshape(facial5points, (2, 5))
 
     crop_size = (image_h, image_w)
