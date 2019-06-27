@@ -113,6 +113,7 @@ def train_net(args):
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
         writer.add_scalar('Train_Top5_Accuracy', train_top5_accs, epoch)
+        writer.add_scalar('Learning_Rate', effective_lr, epoch)
 
         # One epoch's validation
         megaface_acc = megaface_test(model)
