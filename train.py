@@ -109,7 +109,7 @@ def train_net(args):
                                             epoch=epoch,
                                             logger=logger)
         effective_lr = get_learning_rate(optimizer)
-        print('Current effective learning rate: {}\n'.format(effective_lr))
+        print('\nCurrent effective learning rate: {}\n'.format(effective_lr))
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
         writer.add_scalar('Train_Top5_Accuracy', train_top5_accs, epoch)
