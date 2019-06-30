@@ -1,6 +1,8 @@
 import argparse
 import logging
 import math
+import os
+from shutil import copyfile
 
 import cv2 as cv
 import numpy as np
@@ -213,3 +215,13 @@ def ensure_folder(folder):
     import os
     if not os.path.isdir(folder):
         os.mkdir(folder)
+
+
+def full_log(epoch):
+    full_log_dir = 'data/full_log'
+    if not os.path.isdir(full_log_dir):
+        os.mkdir(full_log_dir)
+    filename = 'angles_{}.txt'.format(epoch)
+    dst_file = os.path.join(full_log_dir, filename)
+    src_file = 'data/angles.txt'
+    copyfile(src_file, dst_file)

@@ -1,6 +1,3 @@
-import os
-from shutil import copyfile
-
 import numpy as np
 import torch
 from tensorboardX import SummaryWriter
@@ -13,19 +10,6 @@ from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, MobileNet, resnet_face18, ArcMarginModel
 from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger, adjust_learning_rate, \
     get_learning_rate
-
-
-# from torch.optim.lr_scheduler import StepLR
-
-
-def full_log(epoch):
-    full_log_dir = 'data/full_log'
-    if not os.path.isdir(full_log_dir):
-        os.mkdir(full_log_dir)
-    filename = 'angles_{}.txt'.format(epoch)
-    dst_file = os.path.join(full_log_dir, filename)
-    src_file = 'data/angles.txt'
-    copyfile(src_file, dst_file)
 
 
 def train_net(args):
@@ -88,12 +72,8 @@ def train_net(args):
     train_dataset = ArcFaceDataset('train')
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=8)
 
-    # scheduler = StepLR(optimizer, step_size=args.lr_step, gamma=0.1)
-
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        # scheduler.step(epoch)
-
         # Decay learning rate if there is no improvement for 2 consecutive epochs, and terminate training after 10
         if epochs_since_improvement == 10:
             break
@@ -143,7 +123,7 @@ def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):
     metric_fc.train()
 
     losses = AverageMeter()
-    top5_accs = AverageMeter()
+    top1_accs = AverageMeter()
 
     # Batches
     for i, (img, label) in enumerate(train_loader):
@@ -170,8 +150,8 @@ def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):
 
         # Keep track of metrics
         losses.update(loss.item())
-        top5_accuracy = accuracy(output, label, 5)
-        top5_accs.update(top5_accuracy)
+        top1_accuracy = accuracy(output, label, 15)
+        top1_accs.update(top1_accuracy)
 
         # Print status
         if i % print_freq == 0:
@@ -179,9 +159,9 @@ def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):
                         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
                         'Top5 Accuracy {top5_accs.val:.3f} ({top5_accs.avg:.3f})'.format(epoch, i, len(train_loader),
                                                                                          loss=losses,
-                                                                                         top5_accs=top5_accs))
+                                                                                         top5_accs=top1_accs))
 
-    return losses.avg, top5_accs.avg
+    return losses.avg, top1_accs.avg
 
 
 def main():
