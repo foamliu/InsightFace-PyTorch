@@ -157,9 +157,9 @@ def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):
         if i % print_freq == 0:
             logger.info('Epoch: [{0}][{1}/{2}]\t'
                         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                        'Top5 Accuracy {top5_accs.val:.3f} ({top5_accs.avg:.3f})'.format(epoch, i, len(train_loader),
+                        'Top1 Accuracy {top1_accs.val:.3f} ({top1_accs.avg:.3f})'.format(epoch, i, len(train_loader),
                                                                                          loss=losses,
-                                                                                         top5_accs=top1_accs))
+                                                                                         top1_accs=top1_accs))
 
     return losses.avg, top1_accs.avg
 
