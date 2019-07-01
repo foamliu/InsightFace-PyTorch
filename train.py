@@ -87,7 +87,7 @@ def train_net(args):
             adjust_learning_rate(optimizer, 0.5)
 
         # One epoch's training
-        train_loss, train_top5_accs = train(train_loader=train_loader,
+        train_loss, train_top1_accs = train(train_loader=train_loader,
                                             model=model,
                                             metric_fc=metric_fc,
                                             criterion=criterion,
@@ -98,7 +98,7 @@ def train_net(args):
         print('\nCurrent effective learning rate: {}\n'.format(effective_lr))
 
         writer.add_scalar('Train_Loss', train_loss, epoch)
-        writer.add_scalar('Train_Top5_Accuracy', train_top5_accs, epoch)
+        writer.add_scalar('Train_Top1_Accuracy', train_top1_accs, epoch)
         writer.add_scalar('Learning_Rate', effective_lr, epoch)
 
         # One epoch's validation
