@@ -12,6 +12,19 @@ journal={arXiv:1801.07698},
 year={2018}
 }
 ```
+## Performance
+
+- sgd with momentum
+- margin-m = 0.6
+- margin-s = 64.0
+- batch size = 256
+- input image is normalized with mean=[0.485, 0.456, 0.406] and std=[0.229, 0.224, 0.225]
+
+|Models|MegaFace|Download|
+|---|---|---|
+|SE-LResNet101E-IR|97.09%||
+
+
 ## Dataset
 
 Function|Dataset|
