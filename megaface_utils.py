@@ -77,7 +77,7 @@ def gen_feature(path, model=None):
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs[idx] = get_image(cv.imread(filepath, True), transformer)
+                imgs[idx] = get_image(filepath, transformer)
 
             features = model(imgs.to(device)).cpu().numpy()
             for idx in range(0, length):
@@ -88,9 +88,8 @@ def gen_feature(path, model=None):
                 write_feature(tarfile, feature / np.linalg.norm(feature))
 
 
-def get_image(img, transformer):
-    img = img[..., ::-1]  # RGB
-    img = Image.fromarray(img, 'RGB')  # RGB
+def get_image(filepath, transformer):
+    img = Image.open(filepath).convert('RGB')
     img = transformer(img)
     return img.to(device)
 
