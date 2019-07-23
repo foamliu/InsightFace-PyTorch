@@ -134,7 +134,7 @@ Making gallery!
 Done Making Gallery!
 Allocating ranks (972393)
 
-Rank 1: 0.966381
+Rank 1: <b>0.970899</b>
 
 </pre>
 
