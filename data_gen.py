@@ -12,7 +12,7 @@ from config import pickle_file
 # Just normalization for validation
 data_transforms = {
     'train': transforms.Compose([
-        transforms.RandomHorizontalFlip(0.5),
+        transforms.RandomHorizontalFlip(),
         transforms.ColorJitter(brightness=0.125, contrast=0.125, saturation=0.125),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
