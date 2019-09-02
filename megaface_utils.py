@@ -55,7 +55,7 @@ def gen_feature(path, model=None):
         checkpoint = 'BEST_checkpoint.tar'
         print('loading model: {}...'.format(checkpoint))
         checkpoint = torch.load(checkpoint)
-        model = checkpoint['model'].to(device)
+        model = checkpoint['model'].module.to(device)
 
     model.eval()
 
