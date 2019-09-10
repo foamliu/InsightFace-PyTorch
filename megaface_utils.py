@@ -73,23 +73,34 @@ def gen_feature(path, model=None):
             end_idx = min(file_count, start_idx + batch_size)
             length = end_idx - start_idx
 
-            imgs = torch.zeros([length, 3, 112, 112], dtype=torch.float)
+            imgs_0 = torch.zeros([length, 3, 112, 112], dtype=torch.float)
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs[idx] = get_image(filepath, transformer)
+                imgs_0[idx] = get_image(filepath, transformer, flip=False)
 
-            features = model(imgs.to(device)).cpu().numpy()
+            features_0 = model(imgs_0.to(device)).cpu().numpy()
+
+            imgs_1 = torch.zeros([length, 3, 112, 112], dtype=torch.float)
+            for idx in range(0, length):
+                i = start_idx + idx
+                filepath = files[i]
+                imgs_1[idx] = get_image(filepath, transformer, flip=True)
+
+            features_1 = model(imgs_1.to(device)).cpu().numpy()
+
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
                 tarfile = filepath + '_0.bin'
-                feature = features[idx]
+                feature = features_0[idx] + features_1[idx]
                 write_feature(tarfile, feature / np.linalg.norm(feature))
 
 
-def get_image(filepath, transformer):
+def get_image(filepath, transformer, flip=False):
     img = Image.open(filepath).convert('RGB')
+    if flip:
+        img = img.transpose(Image.FLIP_LEFT_RIGHT)
     img = transformer(img)
     return img.to(device)
 
