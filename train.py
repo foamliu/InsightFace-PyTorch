@@ -9,7 +9,7 @@ from focal_loss import FocalLoss
 from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, MobileNet, resnet_face18, ArcMarginModel
 from optimizer import InsightFaceOptimizer
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger, get_learning_rate
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger
 
 
 def train_net(args):
@@ -85,16 +85,16 @@ def train_net(args):
                                             optimizer=optimizer,
                                             epoch=epoch,
                                             logger=logger)
-        effective_lr = get_learning_rate(optimizer)
-        print('\nCurrent effective learning rate: {}\n'.format(effective_lr))
+        print('\nCurrent effective learning rate: {}\n'.format(optimizer.lr))
+        print('Step num: {}\n'.format(optimizer.step_num))
 
-        writer.add_scalar('Train_Loss', train_loss, epoch)
-        writer.add_scalar('Train_Top1_Accuracy', train_top1_accs, epoch)
-        writer.add_scalar('Learning_Rate', effective_lr, epoch)
+        writer.add_scalar('model/train_loss', train_loss, epoch)
+        writer.add_scalar('model/train_accuracy', train_top1_accs, epoch)
+        writer.add_scalar('model/learning_rate', optimizer.lr, epoch)
 
         # One epoch's validation
         megaface_acc = megaface_test(model)
-        writer.add_scalar('MegaFace_Accuracy', megaface_acc, epoch)
+        writer.add_scalar('model/megaface_accuracy', megaface_acc, epoch)
 
         # Check if there was an improvement
         is_best = megaface_acc > best_acc
