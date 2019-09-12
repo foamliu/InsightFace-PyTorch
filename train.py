@@ -8,8 +8,8 @@ from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
 from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, MobileNet, resnet_face18, ArcMarginModel
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger, adjust_learning_rate, \
-    get_learning_rate
+from optimizer import InsightFaceOptimizer
+from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger, get_learning_rate
 
 
 def train_net(args):
@@ -42,8 +42,11 @@ def train_net(args):
         metric_fc = nn.DataParallel(metric_fc)
 
         if args.optimizer == 'sgd':
-            optimizer = torch.optim.SGD([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
-                                        lr=args.lr, momentum=args.mom, weight_decay=args.weight_decay)
+            # optimizer = torch.optim.SGD([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
+            #                             lr=args.lr, momentum=args.mom, weight_decay=args.weight_decay)
+            optimizer = InsightFaceOptimizer(
+                torch.optim.SGD([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
+                                lr=args.lr, momentum=args.mom, weight_decay=args.weight_decay))
         else:
             optimizer = torch.optim.Adam([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
                                          lr=args.lr, weight_decay=args.weight_decay)
@@ -74,19 +77,6 @@ def train_net(args):
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        # Decay learning rate if there is no improvement for 2 consecutive epochs, and terminate training after 10
-        # if epochs_since_improvement == 10:
-        #     break
-        # if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
-        #     checkpoint = 'BEST_checkpoint.tar'
-        #     checkpoint = torch.load(checkpoint)
-        #     model = checkpoint['model']
-        #     metric_fc = checkpoint['metric_fc']
-        #     optimizer = checkpoint['optimizer']
-        #
-        #     adjust_learning_rate(optimizer, 0.5)
-        adjust_learning_rate(optimizer, 0.85)
-
         # One epoch's training
         train_loss, train_top1_accs = train(train_loader=train_loader,
                                             model=model,

@@ -34,7 +34,7 @@ class BasicBlock(nn.Module):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.PReLU()(inplace=True)
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -71,7 +71,7 @@ class Bottleneck(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * 4)
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.PReLU()
         self.downsample = downsample
         self.stride = stride
 
@@ -321,6 +321,7 @@ class MobileNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         x = self.bn3(x)
+        x = F.normalize(x)
         return x
 
 
@@ -339,6 +340,7 @@ class ArcMarginModel(nn.Module):
         self.sin_m = math.sin(self.m)
         self.th = math.cos(math.pi - self.m)
         self.mm = math.sin(math.pi - self.m) * self.m
+        self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, input, label):
         x = F.normalize(input)
@@ -354,6 +356,7 @@ class ArcMarginModel(nn.Module):
         one_hot.scatter_(1, label.view(-1, 1).long(), 1)
         output = (one_hot * phi) + ((1.0 - one_hot) * cosine)
         output *= self.s
+        output = self.softmax(output)
         return output
 
 
