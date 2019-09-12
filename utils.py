@@ -14,7 +14,7 @@ from config import image_h, image_w
 from mtcnn.detector import detect_faces
 
 
-def clip_gradient(optimizer, grad_clip):
+def _clip_gradient(optimizer, grad_clip):
     """
     Clips gradients computed during backpropagation to avoid explosion of gradients.
     :param optimizer: optimizer with the gradients to be clipped

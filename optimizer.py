@@ -1,3 +1,6 @@
+from utils import _clip_gradient
+
+
 class InsightFaceOptimizer(object):
     """A simple wrapper class for learning rate scheduling"""
 
@@ -20,3 +23,6 @@ class InsightFaceOptimizer(object):
             self.lr = self.lr / 10
             for param_group in self.optimizer.param_groups:
                 param_group['lr'] = self.lr
+
+    def clip_gradient(self, grad_clip):
+        _clip_gradient(self.optimizer, grad_clip)
