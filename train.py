@@ -9,7 +9,7 @@ from focal_loss import FocalLoss
 from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, MobileNet, resnet_face18, ArcMarginModel
 from optimizer import InsightFaceOptimizer
-from utils import parse_args, save_checkpoint, AverageMeter, clip_gradient, accuracy, get_logger
+from utils import parse_args, save_checkpoint, AverageMeter, accuracy, get_logger
 
 
 def train_net(args):
