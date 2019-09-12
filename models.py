@@ -216,7 +216,7 @@ class ResNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         x = self.bn3(x)
-        x = F.normalize(x)
+        # x = F.normalize(x)
         return x
 
 
@@ -341,9 +341,9 @@ class ArcMarginModel(nn.Module):
         self.mm = math.sin(math.pi - self.m) * self.m
 
     def forward(self, input, label):
-        # x = F.normalize(input)
+        x = F.normalize(input)
         W = F.normalize(self.weight)
-        cosine = F.linear(input, W)
+        cosine = F.linear(x, W)
         sine = torch.sqrt(1.0 - torch.pow(cosine, 2))
         phi = cosine * self.cos_m - sine * self.sin_m  # cos(theta + m)
         if self.easy_margin:
