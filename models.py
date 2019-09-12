@@ -216,7 +216,7 @@ class ResNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         x = self.bn3(x)
-
+        x = F.normalize(x)
         return x
 
 
@@ -321,7 +321,6 @@ class MobileNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         x = self.bn3(x)
-        x = F.normalize(x)
         return x
 
 
