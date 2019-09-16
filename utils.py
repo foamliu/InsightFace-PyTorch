@@ -62,7 +62,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def adjust_learning_rate(optimizer, shrink_factor):
+def _adjust_learning_rate(optimizer, shrink_factor):
     """
     Shrinks learning rate by a specified factor.
     :param optimizer: optimizer whose learning rate must be shrunk.
