@@ -194,7 +194,7 @@ def parse_args():
     parser.add_argument('--easy-margin', type=bool, default=False, help='easy margin')
     parser.add_argument('--focal-loss', type=bool, default=False, help='focal loss')
     parser.add_argument('--gamma', type=float, default=2.0, help='focusing parameter gamma')
-    parser.add_argument('--use-se', type=bool, default=False, help='use SEBlock')
+    parser.add_argument('--use-se', type=bool, default=True, help='use SEBlock')
     parser.add_argument('--full-log', type=bool, default=False, help='full logging')
     parser.add_argument('--checkpoint', type=str, default=None, help='checkpoint')
     args = parser.parse_args()
