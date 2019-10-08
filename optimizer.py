@@ -1,4 +1,4 @@
-from utils import _clip_gradient
+from utils import _clip_gradient, _adjust_learning_rate
 
 
 class InsightFaceOptimizer(object):
@@ -26,3 +26,8 @@ class InsightFaceOptimizer(object):
 
     def clip_gradient(self, grad_clip):
         _clip_gradient(self.optimizer, grad_clip)
+
+    def adjust_learning_rate(self, new_lr):
+        for param_group in self.optimizer.param_groups:
+            param_group['lr'] = new_lr
+        print("The new learning rate is %f\n" % (self.optimizer.param_groups[0]['lr'],))

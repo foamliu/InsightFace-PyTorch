@@ -62,7 +62,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def adjust_learning_rate(optimizer, shrink_factor):
+def _adjust_learning_rate(optimizer, shrink_factor):
     """
     Shrinks learning rate by a specified factor.
     :param optimizer: optimizer whose learning rate must be shrunk.
@@ -188,13 +188,13 @@ def parse_args():
     parser.add_argument('--weight-decay', type=float, default=5e-4, help='weight decay')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum')
     parser.add_argument('--emb-size', type=int, default=512, help='embedding length')
-    parser.add_argument('--batch-size', type=int, default=512, help='batch size in each context')
-    parser.add_argument('--margin-m', type=float, default=0.6, help='angular margin m')
+    parser.add_argument('--batch-size', type=int, default=256, help='batch size in each context')
+    parser.add_argument('--margin-m', type=float, default=0.5, help='angular margin m')
     parser.add_argument('--margin-s', type=float, default=64.0, help='feature scale s')
     parser.add_argument('--easy-margin', type=bool, default=False, help='easy margin')
     parser.add_argument('--focal-loss', type=bool, default=False, help='focal loss')
     parser.add_argument('--gamma', type=float, default=2.0, help='focusing parameter gamma')
-    parser.add_argument('--use-se', type=bool, default=False, help='use SEBlock')
+    parser.add_argument('--use-se', type=bool, default=True, help='use SEBlock')
     parser.add_argument('--full-log', type=bool, default=False, help='full logging')
     parser.add_argument('--checkpoint', type=str, default=None, help='checkpoint')
     args = parser.parse_args()
