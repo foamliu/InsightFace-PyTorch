@@ -8,6 +8,7 @@ def detect_face():
 def megaface_align(src, dst):
     for dirName, subdirList, fileList in os.walk(src):
         print('Found directory: %s' % dirName)
+        print('subdirList: %s' % subdirList)
         for fname in fileList:
             print('\t%s' % fname)
 
