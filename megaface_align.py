@@ -1,5 +1,5 @@
 import os
-
+from tqdm import tqdm
 
 def detect_face():
     pass
@@ -7,7 +7,7 @@ def detect_face():
 
 def megaface_align(src, dst):
     image_paths = []
-    for dirName, subdirList, fileList in os.walk(src):
+    for dirName, subdirList, fileList in tqdm(os.walk(src)):
         for fname in fileList:
             if fname.lower().endswith('.jpg'):
                 image_paths.append({'dirName':dirName, 'fname':fname})
