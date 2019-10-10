@@ -1,5 +1,5 @@
 import os
-from multiprocessing import Pool
+from torch.multiprocessing import Pool
 
 import cv2 as cv
 import tqdm
