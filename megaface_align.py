@@ -1,11 +1,13 @@
 import os
-from multiprocessing import Pool
 
 import cv2 as cv
 import tqdm
 from tqdm import tqdm
 
 from utils import get_central_face_attributes, align_face
+
+
+# from multiprocessing import Pool
 
 
 def detect_face(data):
@@ -32,11 +34,11 @@ def megaface_align(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    with Pool(16) as p:
-        r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
+    # with Pool(16) as p:
+    #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    # for image_path in tqdm(image_paths):
-    #     detect_face(image_path)
+    for image_path in tqdm(image_paths):
+        detect_face(image_path)
 
     print('Completed!')
 
