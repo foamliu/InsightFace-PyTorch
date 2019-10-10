@@ -27,9 +27,9 @@ def megaface_align(src, dst):
                 dst_path = os.path.join(dirName.replace(src, dst), fname)
                 image_paths.append({'src_path': src_path, 'dst_path': dst_path})
 
-    print(image_paths[:20])
+    # print(image_paths[:20])
     num_images = len(image_paths)
-    print(num_images)
+    print('num_images: ' + str(num_images))
 
     # with Pool(16) as p:
     #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
