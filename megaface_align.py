@@ -6,11 +6,15 @@ def detect_face():
 
 
 def megaface_align(src, dst):
+    image_paths = []
     for dirName, subdirList, fileList in os.walk(src):
-        print('Found directory: %s' % dirName)
-        print('subdirList: %s' % subdirList)
         for fname in fileList:
-            print('\t%s' % fname)
+            if fname.lower().endswith('.jpg'):
+                image_paths.append({'dirName':dirName, 'fname':fname})
+
+    print(image_paths[:20])
+    print(len(image_paths))
+
 
     # with Pool(2) as p:
     #     r = list(tqdm.tqdm(p.imap(_foo, range(30)), total=30))
