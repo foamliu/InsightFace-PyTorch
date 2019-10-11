@@ -154,6 +154,8 @@ def get_central_face_attributes(full_path):
         raise
     except ValueError:
         pass
+    except IOError:
+        pass
     return False, None, None
 
 
