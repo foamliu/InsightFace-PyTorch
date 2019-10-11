@@ -1,8 +1,9 @@
 import os
-from torch.multiprocessing import Pool
 
 import cv2 as cv
+import torch
 import tqdm
+from torch.multiprocessing import Pool
 from tqdm import tqdm
 
 
@@ -10,10 +11,11 @@ def detect_face(data):
     from utils import get_central_face_attributes, align_face
     src_path = data['src_path']
     dst_path = data['dst_path']
-    has_face, bboxes, landmarks = get_central_face_attributes(src_path)
-    if has_face:
-        img = align_face(src_path, landmarks)
-        cv.imwrite(dst_path, img)
+    with torch.no_grad():
+        has_face, bboxes, landmarks = get_central_face_attributes(src_path)
+        if has_face:
+            img = align_face(src_path, landmarks)
+            cv.imwrite(dst_path, img)
 
     return True
 
