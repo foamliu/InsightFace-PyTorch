@@ -5,10 +5,9 @@ import cv2 as cv
 import tqdm
 from tqdm import tqdm
 
-from utils import get_central_face_attributes, align_face
-
 
 def detect_face(data):
+    from utils import get_central_face_attributes, align_face
     src_path = data['src_path']
     dst_path = data['dst_path']
     has_face, bboxes, landmarks = get_central_face_attributes(src_path)
