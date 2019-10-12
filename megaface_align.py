@@ -33,7 +33,7 @@ def megaface_align(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    with Pool(1) as p:
+    with Pool(12) as p:
         r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
     for image_path in tqdm(image_paths):
