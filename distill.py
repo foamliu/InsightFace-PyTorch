@@ -8,7 +8,21 @@ from data_gen import ArcFaceDataset
 from megaface_eval import megaface_test
 from mobilenet_v2 import MobileNetv2
 from models import resnet101
-from utils import parse_args, save_checkpoint, AverageMeter, get_logger, clip_gradient
+from utils import parse_args, AverageMeter, get_logger, clip_gradient
+
+
+def save_checkpoint(epoch, epochs_since_improvement, model, optimizer, acc, is_best):
+    state = {'epoch': epoch,
+             'epochs_since_improvement': epochs_since_improvement,
+             'acc': acc,
+             'model': model,
+             'optimizer': optimizer}
+    # filename = 'checkpoint_' + str(epoch) + '_' + str(loss) + '.tar'
+    filename = 'checkpoint.tar'
+    torch.save(state, filename)
+    # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
+    if is_best:
+        torch.save(state, 'BEST_checkpoint.tar')
 
 
 def train_net(teacher_model, args):
@@ -26,7 +40,7 @@ def train_net(teacher_model, args):
         model = nn.DataParallel(model)
 
         if args.optimizer == 'sgd':
-            optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=args.mom,
+            optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=args.mom,
                                         weight_decay=args.weight_decay)
         else:
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
@@ -44,7 +58,7 @@ def train_net(teacher_model, args):
     model = model.to(device)
 
     # Loss function
-    criterion = nn.MSELoss(reduction='sum').to(device)
+    criterion = nn.MSELoss().to(device)
 
     # Custom dataloaders
     train_dataset = ArcFaceDataset('train')
