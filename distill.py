@@ -70,7 +70,7 @@ def train_net(teacher_model):
         train_loss = train(train_loader=train_loader,
                            teacher_model=teacher_model,
                            model=model,
-                           criterion=distillation,
+                           criterion=criterion,
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
@@ -112,8 +112,8 @@ def train(train_loader, teacher_model, model, criterion, optimizer, epoch, logge
             teacher_output = teacher_model(img)
 
         # Calculate loss
-        # loss = criterion(output, teacher_output)  # class_id_out => [N, 10575]
-        loss = criterion(output, target, teacher_output, T=20.0, alpha=0.7)
+        loss = criterion(output, teacher_output)  # class_id_out => [N, 10575]
+        # loss = criterion(output, target, teacher_output, T=20.0, alpha=0.7)
 
         # Back prop.
         optimizer.zero_grad()
