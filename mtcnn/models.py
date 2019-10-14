@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from config import device
+
 
 class Flatten(nn.Module):
 
@@ -165,3 +167,8 @@ class ONet(nn.Module):
         c = self.conv6_3(x)
         a = F.softmax(a, dim=1)
         return c, b, a
+
+
+pnet = PNet().to(device)
+rnet = RNet().to(device)
+onet = ONet().to(device)
