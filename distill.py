@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 
@@ -15,6 +16,11 @@ batch_size = 256
 num_workers = 8
 end_epoch = 1000
 checkpoint = None
+
+
+def distillation(y, labels, teacher_scores, T, alpha):
+    return nn.KLDivLoss()(F.log_softmax(y / T), F.softmax(teacher_scores / T)) * (
+            T * T * 2.0 * alpha) + F.cross_entropy(y, labels) * (1. - alpha)
 
 
 def save_checkpoint(epoch, epochs_since_improvement, model, optimizer, acc, is_best):
@@ -59,7 +65,7 @@ def train_net(teacher_model):
     model = model.to(device)
 
     # Loss function
-    criterion = nn.MSELoss().to(device)
+    # criterion = nn.MSELoss().to(device)
 
     # Custom dataloaders
     train_dataset = ArcFaceDataset('train')
@@ -72,7 +78,7 @@ def train_net(teacher_model):
         train_loss = train(train_loader=train_loader,
                            teacher_model=teacher_model,
                            model=model,
-                           criterion=criterion,
+                           criterion=distillation,
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
@@ -103,9 +109,10 @@ def train(train_loader, teacher_model, model, criterion, optimizer, epoch, logge
     losses = AverageMeter()
 
     # Batches
-    for i, (img, _) in enumerate(train_loader):
+    for i, (img, target) in enumerate(train_loader):
         # Move to GPU, if available
         img = img.to(device)
+        target = target.to(device)
 
         # Forward prop.
         output = model(img)  # embedding => [N, 512]
@@ -113,7 +120,8 @@ def train(train_loader, teacher_model, model, criterion, optimizer, epoch, logge
             teacher_output = teacher_model(img)
 
         # Calculate loss
-        loss = criterion(output, teacher_output)  # class_id_out => [N, 10575]
+        # loss = criterion(output, teacher_output)  # class_id_out => [N, 10575]
+        loss = criterion(output, target, teacher_output, T=20.0, alpha=0.7)
 
         # Back prop.
         optimizer.zero_grad()
