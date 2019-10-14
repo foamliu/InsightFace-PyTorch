@@ -4,12 +4,12 @@ import torch.nn.functional as F
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 
-from config import device, grad_clip, print_freq
+from config import device, print_freq
 from data_gen import ArcFaceDataset
 from megaface_eval import megaface_test
 from mobilenet_v2 import MobileNetv2
 from models import resnet101
-from utils import parse_args, AverageMeter, get_logger, clip_gradient
+from utils import parse_args, AverageMeter, get_logger
 
 lr = 1e-5
 batch_size = 256
@@ -56,7 +56,7 @@ def train_net(teacher_model):
     model = model.to(device)
 
     # Loss function
-    # criterion = nn.MSELoss().to(device)
+    criterion = nn.MSELoss().to(device)
 
     # Custom dataloaders
     train_dataset = ArcFaceDataset('train')
@@ -69,7 +69,7 @@ def train_net(teacher_model):
         train_loss = train(train_loader=train_loader,
                            teacher_model=teacher_model,
                            model=model,
-                           criterion=distillation,
+                           criterion=distillation.to(device),
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
