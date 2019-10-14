@@ -18,7 +18,8 @@ end_epoch = 1000
 
 
 def distillation(y, labels, teacher_scores, T, alpha):
-    return nn.KLDivLoss()(F.log_softmax(y / T), F.softmax(teacher_scores / T)) * (
+    criterion = nn.KLDivLoss().to(device)
+    return criterion(F.log_softmax(y / T), F.softmax(teacher_scores / T)) * (
             T * T * 2.0 * alpha) + F.cross_entropy(y, labels) * (1. - alpha)
 
 
@@ -69,7 +70,7 @@ def train_net(teacher_model):
         train_loss = train(train_loader=train_loader,
                            teacher_model=teacher_model,
                            model=model,
-                           criterion=criterion,
+                           criterion=distillation,
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
