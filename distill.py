@@ -10,6 +10,12 @@ from mobilenet_v2 import MobileNetv2
 from models import resnet101
 from utils import parse_args, AverageMeter, get_logger, clip_gradient
 
+lr = 1e-5
+batch_size = 256
+num_workers = 8
+end_epoch = 1000
+checkpoint = None
+
 
 def save_checkpoint(epoch, epochs_since_improvement, model, optimizer, acc, is_best):
     state = {'epoch': epoch,
@@ -25,10 +31,9 @@ def save_checkpoint(epoch, epochs_since_improvement, model, optimizer, acc, is_b
         torch.save(state, 'BEST_checkpoint.tar')
 
 
-def train_net(teacher_model, args):
+def train_net(teacher_model):
     torch.manual_seed(7)
     np.random.seed(7)
-    checkpoint = args.checkpoint
     start_epoch = 0
     best_acc = 0
     writer = SummaryWriter()
@@ -39,11 +44,7 @@ def train_net(teacher_model, args):
         model = MobileNetv2()
         model = nn.DataParallel(model)
 
-        if args.optimizer == 'sgd':
-            optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=args.mom,
-                                        weight_decay=args.weight_decay)
-        else:
-            optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     else:
         checkpoint = torch.load(checkpoint)
@@ -62,10 +63,11 @@ def train_net(teacher_model, args):
 
     # Custom dataloaders
     train_dataset = ArcFaceDataset('train')
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=8)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
+                                               num_workers=num_workers)
 
     # Epochs
-    for epoch in range(start_epoch, args.end_epoch):
+    for epoch in range(start_epoch, end_epoch):
         # One epoch's training
         train_loss = train(train_loader=train_loader,
                            teacher_model=teacher_model,
@@ -146,7 +148,7 @@ def main():
     teacher_model = teacher_model.to(device)
     teacher_model.eval()
 
-    train_net(teacher_model, args)
+    train_net(teacher_model)
 
 
 if __name__ == '__main__':
