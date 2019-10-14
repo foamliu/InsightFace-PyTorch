@@ -2,12 +2,14 @@ import argparse
 import json
 import os
 import struct
+import time
 
 import cv2 as cv
 import numpy as np
 import torch
 import tqdm
 from PIL import Image
+from torch import nn
 from tqdm import tqdm
 
 from config import device
@@ -52,10 +54,28 @@ def gen_feature(path, model=None):
     transformer = data_transforms['val']
 
     if model is None:
-        checkpoint = 'BEST_checkpoint.tar'
-        print('loading model: {}...'.format(checkpoint))
-        checkpoint = torch.load(checkpoint)
-        model = checkpoint['model'].module.to(device)
+        # checkpoint = 'BEST_checkpoint.tar'
+        # print('loading model: {}...'.format(checkpoint))
+        # checkpoint = torch.load(checkpoint)
+        # model = checkpoint['model'].module.to(device)
+        filename = 'insight-face-v3.pt'
+
+        class HParams:
+            def __init__(self):
+                self.pretrained = False
+                self.use_se = True
+
+        config = HParams()
+
+        print('loading {}...'.format(filename))
+        start = time.time()
+        from models import resnet101
+
+        model = resnet101(config)
+        model.load_state_dict(torch.load(filename))
+        print('elapsed {} sec'.format(time.time() - start))
+
+        model = nn.DataParallel(model)
 
     model.eval()
 
