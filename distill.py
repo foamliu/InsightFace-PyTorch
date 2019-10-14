@@ -15,7 +15,6 @@ lr = 1e-5
 batch_size = 256
 num_workers = 8
 end_epoch = 1000
-checkpoint = None
 
 
 def distillation(y, labels, teacher_scores, T, alpha):
@@ -46,18 +45,10 @@ def train_net(teacher_model):
     epochs_since_improvement = 0
 
     # Initialize / load checkpoint
-    if checkpoint is None:
-        model = MobileNetv2()
-        model = nn.DataParallel(model)
+    model = MobileNetv2()
+    model = nn.DataParallel(model)
 
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
-    else:
-        checkpoint = torch.load(checkpoint)
-        start_epoch = checkpoint['epoch'] + 1
-        epochs_since_improvement = checkpoint['epochs_since_improvement']
-        model = checkpoint['model']
-        optimizer = checkpoint['optimizer']
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     logger = get_logger()
 
@@ -128,7 +119,7 @@ def train(train_loader, teacher_model, model, criterion, optimizer, epoch, logge
         loss.backward()
 
         # Clip gradients
-        clip_gradient(optimizer, grad_clip)
+        # clip_gradient(optimizer, grad_clip)
 
         # Update weights
         optimizer.step()
