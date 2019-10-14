@@ -69,7 +69,7 @@ def train_net(teacher_model):
         train_loss = train(train_loader=train_loader,
                            teacher_model=teacher_model,
                            model=model,
-                           criterion=distillation.to(device),
+                           criterion=criterion,
                            optimizer=optimizer,
                            epoch=epoch,
                            logger=logger)
