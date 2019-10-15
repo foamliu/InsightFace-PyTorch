@@ -76,6 +76,7 @@ def gen_feature(path, model=None):
         print('elapsed {} sec'.format(time.time() - start))
 
         model = nn.DataParallel(model)
+        model = model.to(device)
 
     model.eval()
 
