@@ -8,7 +8,7 @@ from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
 from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, resnet_face18, ArcMarginModel
-from utils import parse_args, save_checkpoint, AverageMeter, accuracy, get_logger, adjust_learning_rate
+from utils import parse_args, save_checkpoint, AverageMeter, accuracy, get_logger, adjust_learning_rate, clip_gradient
 
 
 def train_net(args):
@@ -143,7 +143,7 @@ def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):
         loss.backward()
 
         # Clip gradients
-        optimizer.clip_gradient(grad_clip)
+        clip_gradient(optimizer, grad_clip)
 
         # Update weights
         optimizer.step()
