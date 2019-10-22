@@ -96,7 +96,7 @@ def train_net(args):
                                             logger=logger)
         lr = optimizer.param_groups[0]['lr']
         print('\nCurrent effective learning rate: {}\n'.format(lr))
-        print('Step num: {}\n'.format(optimizer.step_num))
+        # print('Step num: {}\n'.format(optimizer.step_num))
 
         writer.add_scalar('model/train_loss', train_loss, epoch)
         writer.add_scalar('model/train_accuracy', train_top1_accs, epoch)
