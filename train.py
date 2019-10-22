@@ -94,12 +94,13 @@ def train_net(args):
                                             optimizer=optimizer,
                                             epoch=epoch,
                                             logger=logger)
-        print('\nCurrent effective learning rate: {}\n'.format(optimizer.lr))
+        lr = optimizer.param_groups[0]['lr']
+        print('\nCurrent effective learning rate: {}\n'.format(lr))
         print('Step num: {}\n'.format(optimizer.step_num))
 
         writer.add_scalar('model/train_loss', train_loss, epoch)
         writer.add_scalar('model/train_accuracy', train_top1_accs, epoch)
-        writer.add_scalar('model/learning_rate', optimizer.lr, epoch)
+        writer.add_scalar('model/learning_rate', lr, epoch)
 
         # One epoch's validation
         megaface_acc = megaface_test(model)
