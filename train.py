@@ -3,11 +3,11 @@ import torch
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 
-from config import device, grad_clip, print_freq
+from config import device, grad_clip, print_freq, num_workers
 from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
 from megaface_eval import megaface_test
-from models import resnet18, resnet34, resnet50, resnet101, resnet152, resnet_face18, ArcMarginModel
+from models import resnet18, resnet34, resnet50, resnet101, resnet152, ArcMarginModel
 from utils import parse_args, save_checkpoint, AverageMeter, accuracy, get_logger, adjust_learning_rate, clip_gradient
 
 
@@ -16,7 +16,7 @@ def train_net(args):
     np.random.seed(7)
     checkpoint = args.checkpoint
     start_epoch = 0
-    best_acc = 0
+    best_acc = float('-inf')
     writer = SummaryWriter()
     epochs_since_improvement = 0
 
@@ -36,7 +36,8 @@ def train_net(args):
             from mobilenet_v2 import MobileNetV2
             model = MobileNetV2()
         else:
-            model = resnet_face18(args.use_se)
+            raise TypeError('network {} is not supported.'.format(args.network))
+
         model = nn.DataParallel(model)
         metric_fc = ArcMarginModel(args)
         metric_fc = nn.DataParallel(metric_fc)
@@ -70,7 +71,8 @@ def train_net(args):
 
     # Custom dataloaders
     train_dataset = ArcFaceDataset('train')
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=8)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
+                                               num_workers=num_workers)
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
