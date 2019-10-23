@@ -136,6 +136,7 @@ def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):
 
         # Forward prop.
         feature = model(img)  # embedding => [N, 512]
+        print(feature.size())
         output = metric_fc(feature, label)  # class_id_out => [N, 10575]
 
         # Calculate loss
