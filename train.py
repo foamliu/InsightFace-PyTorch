@@ -107,21 +107,22 @@ def train_net(args):
         writer.add_scalar('model/train_accuracy', train_top1_accs, epoch)
         writer.add_scalar('model/learning_rate', lr, epoch)
 
-        # One epoch's validation
-        megaface_acc = megaface_test(model)
-        writer.add_scalar('model/megaface_accuracy', megaface_acc, epoch)
+        if epoch % 5 == 0:
+            # One epoch's validation
+            megaface_acc = megaface_test(model)
+            writer.add_scalar('model/megaface_accuracy', megaface_acc, epoch)
 
-        # Check if there was an improvement
-        is_best = megaface_acc > best_acc
-        best_acc = max(megaface_acc, best_acc)
-        if not is_best:
-            epochs_since_improvement += 1
-            print("\nEpochs since last improvement: %d\n" % (epochs_since_improvement,))
-        else:
-            epochs_since_improvement = 0
+            # Check if there was an improvement
+            is_best = megaface_acc > best_acc
+            best_acc = max(megaface_acc, best_acc)
+            if not is_best:
+                epochs_since_improvement += 1
+                print("\nEpochs since last improvement: %d\n" % (epochs_since_improvement,))
+            else:
+                epochs_since_improvement = 0
 
-        # Save checkpoint
-        save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, best_acc, is_best)
+            # Save checkpoint
+            save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, best_acc, is_best)
 
 
 def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):

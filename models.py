@@ -295,7 +295,7 @@ class ArcMarginModel(nn.Module):
 
 
 if __name__ == "__main__":
-    # args = parse_args()
-    # model = resnet152(args).to(device)
-    model = MobileNet(1.0).to(device)
+    from utils import parse_args
+    args = parse_args()
+    model = resnet152(args).to(device)
     summary(model, (3, 112, 112))
