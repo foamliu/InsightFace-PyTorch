@@ -5,7 +5,7 @@ import torch
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 
-from config import device, grad_clip, print_freq, num_workers, logger
+from config import device, grad_clip, print_freq, num_workers
 from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
 from megaface_eval import megaface_test
@@ -164,11 +164,11 @@ def train(train_loader, model, metric_fc, criterion, optimizer, epoch):
 
         # Print status
         if i % print_freq == 0:
-            logger.info('Epoch: [{0}][{1}/{2}]\t'
-                        'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                        'Top1 Accuracy {top1_accs.val:.3f} ({top1_accs.avg:.3f})'.format(epoch, i, len(train_loader),
-                                                                                         loss=losses,
-                                                                                         top1_accs=top1_accs))
+            print('Epoch: [{0}][{1}/{2}]\t'
+                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                  'Top1 Accuracy {top1_accs.val:.3f} ({top1_accs.avg:.3f})'.format(epoch, i, len(train_loader),
+                                                                                   loss=losses,
+                                                                                   top1_accs=top1_accs))
 
     return losses.avg, top1_accs.avg
 
