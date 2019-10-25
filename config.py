@@ -1,3 +1,4 @@
+import logging
 import os
 
 import torch
@@ -25,3 +26,16 @@ path_imgidx = os.path.join(faces_ms1m_folder, 'train.idx')
 path_imgrec = os.path.join(faces_ms1m_folder, 'train.rec')
 IMG_DIR = 'data/images'
 pickle_file = 'data/faces_ms1m_112x112.pickle'
+
+
+def get_logger():
+    logger = logging.getLogger()
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(asctime)s %(levelname)s \t%(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    return logger
+
+
+logger = get_logger()

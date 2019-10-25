@@ -1,5 +1,4 @@
 import argparse
-import logging
 import math
 import os
 from shutil import copyfile
@@ -201,16 +200,6 @@ def parse_args():
     parser.add_argument('--checkpoint', type=str, default=None, help='checkpoint')
     args = parser.parse_args()
     return args
-
-
-def get_logger():
-    logger = logging.getLogger()
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s \t%(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
-    return logger
 
 
 def ensure_folder(folder):
