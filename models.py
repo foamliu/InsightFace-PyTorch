@@ -6,7 +6,7 @@ import torch.utils.model_zoo as model_zoo
 from torch import nn
 from torch.nn import Parameter
 from torchsummary import summary
-
+from torchvision.models import resnet101
 from config import device, num_classes
 from silu import SiLU
 
@@ -245,7 +245,7 @@ def resnet101(args, **kwargs):
     if args.pretrained:
         # load part of pre-trained model
         model_dict = model.state_dict()
-        pretrained_dict = model_zoo.load_url(model_urls['resnet101'])
+        pretrained_dict = resnet101().state_dict()
         # 1. filter out unnecessary keys
         pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
         # 2. overwrite entries in the existing state dict
