@@ -3,10 +3,11 @@ import math
 import torch
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
+import torchvision
 from torch import nn
 from torch.nn import Parameter
 from torchsummary import summary
-import torchvision
+
 from config import device, num_classes
 from silu import SiLU, silu
 
@@ -165,7 +166,7 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.bn2 = nn.BatchNorm2d(512)
         self.dropout = nn.Dropout()
-        self.conv2 = nn.Conv2d(512, 512, kernel_size=7, stride=1, groups=512) # nn.Linear(512 * 7 * 7, 512)
+        self.conv2 = nn.Conv2d(512, 512, kernel_size=7, stride=1, groups=512)  # nn.Linear(512 * 7 * 7, 512)
         self.bn3 = nn.BatchNorm1d(512)
 
         for m in self.modules():
