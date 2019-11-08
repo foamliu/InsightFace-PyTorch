@@ -8,6 +8,7 @@ from torch.nn import Parameter
 from torchsummary import summary
 
 from config import device, num_classes
+from silu import SiLU
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152']
@@ -23,8 +24,7 @@ model_urls = {
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                     padding=1, bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -34,7 +34,7 @@ class BasicBlock(nn.Module):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.relu = nn.PReLU()(inplace=True)
+        self.relu = SiLU()
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -66,12 +66,11 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
-                               padding=1, bias=False)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * 4)
-        self.relu = nn.PReLU()
+        self.relu = SiLU()
         self.downsample = downsample
         self.stride = stride
 
@@ -104,7 +103,7 @@ class SEBlock(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
             nn.Linear(channel, channel // reduction),
-            nn.PReLU(),
+            SiLU(),
             nn.Linear(channel // reduction, channel),
             nn.Sigmoid()
         )
@@ -124,7 +123,7 @@ class IRBlock(nn.Module):
         self.bn0 = nn.BatchNorm2d(inplanes)
         self.conv1 = conv3x3(inplanes, inplanes)
         self.bn1 = nn.BatchNorm2d(inplanes)
-        self.prelu = nn.PReLU()
+        self.relu = SiLU()
         self.conv2 = conv3x3(inplanes, planes, stride)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -138,7 +137,7 @@ class IRBlock(nn.Module):
         out = self.bn0(x)
         out = self.conv1(out)
         out = self.bn1(out)
-        out = self.prelu(out)
+        out = self.relu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
@@ -149,7 +148,7 @@ class IRBlock(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = self.prelu(out)
+        out = self.relu(out)
 
         return out
 
@@ -162,7 +161,7 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
-        self.prelu = nn.PReLU()
+        self.relu = SiLU()
         self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
@@ -203,7 +202,7 @@ class ResNet(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
-        x = self.prelu(x)
+        x = self.relu(x)
         x = self.maxpool(x)
 
         x = self.layer1(x)
@@ -296,6 +295,7 @@ class ArcMarginModel(nn.Module):
 
 if __name__ == "__main__":
     from utils import parse_args
+
     args = parse_args()
     model = resnet152(args).to(device)
     summary(model, (3, 112, 112))
