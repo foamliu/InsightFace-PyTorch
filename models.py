@@ -243,7 +243,16 @@ def resnet50(args, **kwargs):
 def resnet101(args, **kwargs):
     model = ResNet(IRBlock, [3, 4, 23, 3], use_se=args.use_se, **kwargs)
     if args.pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
+        # load part of pre-trained model
+        model_dict = model.state_dict()
+        pretrained_dict = model_zoo.load_url(model_urls['resnet101'])
+        # 1. filter out unnecessary keys
+        pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+        # 2. overwrite entries in the existing state dict
+        model_dict.update(pretrained_dict)
+        # 3. load the new state dict
+        model.load_state_dict(pretrained_dict)
+
     return model
 
 
