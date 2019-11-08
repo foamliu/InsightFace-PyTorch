@@ -13,7 +13,6 @@ from torch import nn
 from tqdm import tqdm
 
 from config import device
-from data_gen import data_transforms
 from utils import align_face, get_central_face_attributes
 
 
@@ -51,8 +50,6 @@ def crop(path, oldkey, newkey):
 
 
 def gen_feature(path, model=None):
-    transformer = data_transforms['val']
-
     if model is None:
         # checkpoint = 'BEST_checkpoint.tar'
         # print('loading model: {}...'.format(checkpoint))
@@ -98,7 +95,7 @@ def gen_feature(path, model=None):
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs_0[idx] = get_image(filepath, transformer, flip=False)
+                imgs_0[idx] = get_image(filepath, flip=False)
 
             features_0 = model(imgs_0.to(device)).cpu().numpy()
 
@@ -106,7 +103,7 @@ def gen_feature(path, model=None):
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs_1[idx] = get_image(filepath, transformer, flip=True)
+                imgs_1[idx] = get_image(filepath, flip=True)
 
             features_1 = model(imgs_1.to(device)).cpu().numpy()
 
@@ -118,11 +115,13 @@ def gen_feature(path, model=None):
                 write_feature(tarfile, feature / np.linalg.norm(feature))
 
 
-def get_image(filepath, transformer, flip=False):
-    img = Image.open(filepath).convert('RGB')
+def get_image(filepath, flip=False):
+    img = cv.imread(filepath)
+    img = cv.flip(img, 1)
     if flip:
         img = img.transpose(Image.FLIP_LEFT_RIGHT)
-    img = transformer(img)
+    img = ((img - 127.5) / 128.).astype(np.float32)
+    img = np.transpose(img, (2, 0, 1))  # HxWxC array to CxHxW
     return img.to(device)
 
 
