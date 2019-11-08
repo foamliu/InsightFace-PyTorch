@@ -122,6 +122,7 @@ def get_image(filepath, flip=False):
         img = img.transpose(Image.FLIP_LEFT_RIGHT)
     img = ((img - 127.5) / 128.).astype(np.float32)
     img = np.transpose(img, (2, 0, 1))  # HxWxC array to CxHxW
+    img = torch.FloatTensor(img)
     return img.to(device)
 
 
