@@ -2,14 +2,11 @@ import argparse
 import json
 import os
 import struct
-import time
 
 import cv2 as cv
 import numpy as np
 import torch
 import tqdm
-from PIL import Image
-from torch import nn
 from tqdm import tqdm
 
 from config import device
