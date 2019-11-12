@@ -3,6 +3,7 @@ import subprocess
 import torch
 from torch import nn
 
+from config import device
 from megaface_utils import gen_feature, remove_noise
 
 
@@ -36,9 +37,33 @@ def megaface_test(model):
 
 
 if __name__ == '__main__':
+    # checkpoint = 'BEST_checkpoint.tar'
+    # print('loading model: {}...'.format(checkpoint))
+    # checkpoint = torch.load(checkpoint)
+    # model = checkpoint['model'].module.to(device)
+    # filename = 'insight-face-v3.pt'
+    #
+    # class HParams:
+    #     def __init__(self):
+    #         self.pretrained = False
+    #         self.use_se = True
+    #
+    # config = HParams()
+    #
+    # print('loading {}...'.format(filename))
+    # start = time.time()
+    # from models import resnet101
+    #
+    # model = resnet101(config)
+    # model.load_state_dict(torch.load(filename))
+    # print('elapsed {} sec'.format(time.time() - start))
+    #
+    # model = nn.DataParallel(model)
+
     scripted_model_file = 'mobilefacenet_scripted.pt'
     model = torch.jit.load(scripted_model_file)
     model = nn.DataParallel(model)
+    model = model.to(device)
     model.eval()
 
     megaface_test(model)
