@@ -46,7 +46,7 @@ def crop(path, oldkey, newkey):
     print('{} images were cropped successfully.'.format(filecounter))
 
 
-def gen_feature(path, model=None):
+def gen_feature(path, model):
     model.eval()
 
     print('gen features {}...'.format(path))
@@ -63,7 +63,7 @@ def gen_feature(path, model=None):
             end_idx = min(file_count, start_idx + batch_size)
             length = end_idx - start_idx
 
-            imgs_0 = torch.zeros([length, 3, 112, 112], dtype=torch.float)
+            imgs_0 = torch.zeros([length, 3, 112, 112], dtype=torch.float, device=device)
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
@@ -71,7 +71,7 @@ def gen_feature(path, model=None):
 
             features_0 = model(imgs_0.to(device)).cpu().numpy()
 
-            imgs_1 = torch.zeros([length, 3, 112, 112], dtype=torch.float)
+            imgs_1 = torch.zeros([length, 3, 112, 112], dtype=torch.float, device=device)
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
