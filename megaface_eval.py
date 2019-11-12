@@ -1,5 +1,8 @@
 import subprocess
 
+import torch
+from torch import nn
+
 from megaface_utils import gen_feature, remove_noise
 
 
@@ -33,4 +36,9 @@ def megaface_test(model):
 
 
 if __name__ == '__main__':
-    megaface_test(None)
+    scripted_model_file = 'mobilefacenet_scripted.pt'
+    model = torch.jit.load(scripted_model_file)
+    model = nn.DataParallel(model)
+    model.eval()
+
+    megaface_test(model)
