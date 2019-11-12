@@ -36,7 +36,9 @@ def train_net(args):
         else:
             raise TypeError('network {} is not supported.'.format(args.network))
 
+        model = nn.DataParallel(model)
         metric_fc = ArcMarginModel(args)
+        metric_fc = nn.DataParallel(metric_fc)
 
         if args.optimizer == 'sgd':
             optimizer = torch.optim.SGD([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
@@ -52,9 +54,6 @@ def train_net(args):
         model = checkpoint['model']
         metric_fc = checkpoint['metric_fc']
         optimizer = checkpoint['optimizer']
-
-    model = nn.DataParallel(model)
-    metric_fc = nn.DataParallel(metric_fc)
 
     # Move to GPU, if available
     model = model.to(device)
