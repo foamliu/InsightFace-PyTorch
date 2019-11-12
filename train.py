@@ -75,6 +75,7 @@ def train_net(args):
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
+        scheduler.step(epoch)
         # One epoch's training
         train_loss, train_top1_accs = train(train_loader=train_loader,
                                             model=model,
@@ -89,8 +90,6 @@ def train_net(args):
         writer.add_scalar('model/train_loss', train_loss, epoch)
         writer.add_scalar('model/train_accuracy', train_top1_accs, epoch)
         writer.add_scalar('model/learning_rate', lr, epoch)
-
-        scheduler.step(epoch)
 
         # One epoch's validation
         megaface_acc = megaface_test(model)
