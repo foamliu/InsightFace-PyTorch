@@ -1,7 +1,7 @@
 import subprocess
 
 import torch
-from torch import nn
+# from torch import nn
 
 from config import device
 from megaface_utils import gen_feature, remove_noise
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     scripted_model_file = 'mobilefacenet_scripted.pt'
     print('loading {}...'.format(scripted_model_file))
     model = torch.jit.load(scripted_model_file)
-    model = nn.DataParallel(model)
+    # model = nn.DataParallel(model)
     model = model.to(device)
     model.eval()
 
