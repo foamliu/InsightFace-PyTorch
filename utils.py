@@ -25,13 +25,14 @@ def clip_gradient(optimizer, grad_clip):
                 param.grad.data.clamp_(-grad_clip, grad_clip)
 
 
-def save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, acc, is_best):
+def save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, acc, is_best, scheduler):
     state = {'epoch': epoch,
              'epochs_since_improvement': epochs_since_improvement,
              'acc': acc,
              'model': model,
              'metric_fc': metric_fc,
-             'optimizer': optimizer}
+             'optimizer': optimizer,
+             'scheduler': scheduler}
     # filename = 'checkpoint_' + str(epoch) + '_' + str(loss) + '.tar'
     filename = 'checkpoint.tar'
     torch.save(state, filename)

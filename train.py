@@ -47,6 +47,8 @@ def train_net(args):
             optimizer = torch.optim.Adam([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
                                          lr=args.lr, weight_decay=args.weight_decay)
 
+        scheduler = MultiStepLR(optimizer, milestones=[10, 20, 30, 40], gamma=0.1)
+
     else:
         checkpoint = torch.load(checkpoint)
         start_epoch = checkpoint['epoch'] + 1
@@ -54,6 +56,7 @@ def train_net(args):
         model = checkpoint['model']
         metric_fc = checkpoint['metric_fc']
         optimizer = checkpoint['optimizer']
+        scheduler = checkpoint['scheduler']
 
     # Move to GPU, if available
     model = model.to(device)
@@ -70,11 +73,8 @@ def train_net(args):
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
                                                num_workers=num_workers)
 
-    scheduler = MultiStepLR(optimizer, milestones=[10, 20, 30, 40], gamma=0.1)
-
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        scheduler.step(epoch)
         # One epoch's training
         train_loss, train_top1_accs = train(train_loader=train_loader,
                                             model=model,
@@ -104,7 +104,8 @@ def train_net(args):
             epochs_since_improvement = 0
 
         # Save checkpoint
-        save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, best_acc, is_best)
+        save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, best_acc, is_best, scheduler)
+        scheduler.step(epoch)
 
 
 def train(train_loader, model, metric_fc, criterion, optimizer, epoch):
