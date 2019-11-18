@@ -7,9 +7,11 @@ import cv2 as cv
 import numpy as np
 import torch
 import tqdm
+from PIL import Image
 from tqdm import tqdm
 
 from config import device
+from data_gen import data_transforms
 from utils import align_face, get_central_face_attributes
 
 
@@ -46,6 +48,16 @@ def crop(path, oldkey, newkey):
     print('{} images were cropped successfully.'.format(filecounter))
 
 
+def get_image(transformer, filepath, flip=False):
+    img = cv.imread(filepath)
+    if flip:
+        img = cv.flip(img, 1)
+    img = img[..., ::-1]  # RGB
+    img = Image.fromarray(img, 'RGB')  # RGB
+    img = transformer(img)
+    return img.to(device)
+
+
 def gen_feature(path, model):
     model.eval()
 
@@ -55,6 +67,8 @@ def gen_feature(path, model):
     for filepath in walkdir(path, '.jpg'):
         files.append(filepath)
     file_count = len(files)
+
+    transformer = data_transforms['val']
 
     batch_size = 128
 
@@ -67,7 +81,7 @@ def gen_feature(path, model):
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs_0[idx] = get_image(filepath, flip=False)
+                imgs_0[idx] = get_image(transformer, filepath, flip=False)
 
             features_0 = model(imgs_0.to(device)).cpu().numpy()
 
@@ -75,7 +89,7 @@ def gen_feature(path, model):
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs_1[idx] = get_image(filepath, flip=True)
+                imgs_1[idx] = get_image(transformer, filepath, flip=True)
 
             features_1 = model(imgs_1.to(device)).cpu().numpy()
 
@@ -85,16 +99,6 @@ def gen_feature(path, model):
                 tarfile = filepath + '_0.bin'
                 feature = features_0[idx] + features_1[idx]
                 write_feature(tarfile, feature / np.linalg.norm(feature))
-
-
-def get_image(filepath, flip=False):
-    img = cv.imread(filepath)
-    if flip:
-        img = cv.flip(img, 1)
-    img = ((img - 127.5) / 128.)
-    img = np.transpose(img, (2, 0, 1))  # HxWxC array to CxHxW
-    img = torch.FloatTensor(img)
-    return img.to(device)
 
 
 def read_feature(filename):

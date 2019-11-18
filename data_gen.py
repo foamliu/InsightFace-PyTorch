@@ -1,12 +1,27 @@
 import os
 import pickle
 
-import cv2 as cv
-import numpy as np
+from PIL import Image
 from torch.utils.data import Dataset
+from torchvision import transforms
 
 from config import IMG_DIR
 from config import pickle_file
+
+# Data augmentation and normalization for training
+# Just normalization for validation
+data_transforms = {
+    'train': transforms.Compose([
+        transforms.RandomHorizontalFlip(),
+        transforms.ColorJitter(brightness=0.125, contrast=0.125, saturation=0.125),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ]),
+    'val': transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ]),
+}
 
 
 class ArcFaceDataset(Dataset):
@@ -16,6 +31,7 @@ class ArcFaceDataset(Dataset):
 
         self.split = split
         self.samples = data
+        self.transformer = data_transforms['train']
 
     def __getitem__(self, i):
         sample = self.samples[i]
@@ -23,9 +39,8 @@ class ArcFaceDataset(Dataset):
         label = sample['label']
 
         filename = os.path.join(IMG_DIR, filename)
-        img = cv.imread(filename)
-        img = ((img - 127.5) / 128.).astype(np.float32)
-        img = np.transpose(img, (2, 0, 1))  # HxWxC array to CxHxW
+        img = Image.open(filename).convert('RGB')
+        img = self.transformer(img)
 
         return img, label
 
