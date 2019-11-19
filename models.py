@@ -3,11 +3,13 @@ import math
 import torch
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
+import torchvision
 from torch import nn
 from torch.nn import Parameter
 from torchsummary import summary
 
 from config import device, num_classes
+from silu import SiLU, silu
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152']
@@ -23,8 +25,7 @@ model_urls = {
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                     padding=1, bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -34,7 +35,6 @@ class BasicBlock(nn.Module):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.relu = nn.PReLU()(inplace=True)
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -45,7 +45,7 @@ class BasicBlock(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.relu(out)
+        out = silu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
@@ -54,7 +54,7 @@ class BasicBlock(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = self.relu(out)
+        out = silu(out)
 
         return out
 
@@ -66,12 +66,10 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
-                               padding=1, bias=False)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * 4)
-        self.relu = nn.PReLU()
         self.downsample = downsample
         self.stride = stride
 
@@ -80,11 +78,11 @@ class Bottleneck(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.relu(out)
+        out = silu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
-        out = self.relu(out)
+        out = silu(out)
 
         out = self.conv3(out)
         out = self.bn3(out)
@@ -93,7 +91,7 @@ class Bottleneck(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = self.relu(out)
+        out = silu(out)
 
         return out
 
@@ -104,7 +102,7 @@ class SEBlock(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
             nn.Linear(channel, channel // reduction),
-            nn.PReLU(),
+            SiLU(),
             nn.Linear(channel // reduction, channel),
             nn.Sigmoid()
         )
@@ -124,7 +122,6 @@ class IRBlock(nn.Module):
         self.bn0 = nn.BatchNorm2d(inplanes)
         self.conv1 = conv3x3(inplanes, inplanes)
         self.bn1 = nn.BatchNorm2d(inplanes)
-        self.prelu = nn.PReLU()
         self.conv2 = conv3x3(inplanes, planes, stride)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -138,7 +135,7 @@ class IRBlock(nn.Module):
         out = self.bn0(x)
         out = self.conv1(out)
         out = self.bn1(out)
-        out = self.prelu(out)
+        out = silu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
@@ -149,7 +146,7 @@ class IRBlock(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = self.prelu(out)
+        out = silu(out)
 
         return out
 
@@ -162,15 +159,13 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
-        self.prelu = nn.PReLU()
-        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.layer1 = self._make_layer(block, 64, layers[0])
+        self.layer1 = self._make_layer(block, 64, layers[0], stride=2)
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.bn2 = nn.BatchNorm2d(512)
         self.dropout = nn.Dropout()
-        self.fc = nn.Linear(512 * 7 * 7, 512)
+        self.conv2 = nn.Conv2d(512, 512, kernel_size=7, stride=1, groups=512)
         self.bn3 = nn.BatchNorm1d(512)
 
         for m in self.modules():
@@ -203,8 +198,7 @@ class ResNet(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
-        x = self.prelu(x)
-        x = self.maxpool(x)
+        x = silu(x)
 
         x = self.layer1(x)
         x = self.layer2(x)
@@ -213,10 +207,9 @@ class ResNet(nn.Module):
 
         x = self.bn2(x)
         x = self.dropout(x)
+        x = self.conv2(x)
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
         x = self.bn3(x)
-        # x = F.normalize(x)
         return x
 
 
@@ -244,7 +237,16 @@ def resnet50(args, **kwargs):
 def resnet101(args, **kwargs):
     model = ResNet(IRBlock, [3, 4, 23, 3], use_se=args.use_se, **kwargs)
     if args.pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
+        # load part of pre-trained model
+        model_dict = model.state_dict()
+        pretrained_dict = torchvision.models.resnet101(pretrained=True).state_dict()
+        # 1. filter out unnecessary keys
+        pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+        # 2. overwrite entries in the existing state dict
+        model_dict.update(pretrained_dict)
+        # 3. load the new state dict
+        model.load_state_dict(pretrained_dict)
+
     return model
 
 
@@ -295,7 +297,8 @@ class ArcMarginModel(nn.Module):
 
 
 if __name__ == "__main__":
-    # args = parse_args()
-    # model = resnet152(args).to(device)
-    model = MobileNet(1.0).to(device)
+    from utils import parse_args
+
+    args = parse_args()
+    model = resnet152(args).to(device)
     summary(model, (3, 112, 112))

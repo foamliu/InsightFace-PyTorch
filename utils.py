@@ -1,5 +1,4 @@
 import argparse
-import logging
 import math
 import os
 from shutil import copyfile
@@ -26,13 +25,14 @@ def clip_gradient(optimizer, grad_clip):
                 param.grad.data.clamp_(-grad_clip, grad_clip)
 
 
-def save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, acc, is_best):
+def save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, acc, is_best, scheduler):
     state = {'epoch': epoch,
              'epochs_since_improvement': epochs_since_improvement,
              'acc': acc,
              'model': model,
              'metric_fc': metric_fc,
-             'optimizer': optimizer}
+             'optimizer': optimizer,
+             'scheduler': scheduler}
     # filename = 'checkpoint_' + str(epoch) + '_' + str(loss) + '.tar'
     filename = 'checkpoint.tar'
     torch.save(state, filename)
@@ -201,16 +201,6 @@ def parse_args():
     parser.add_argument('--checkpoint', type=str, default=None, help='checkpoint')
     args = parser.parse_args()
     return args
-
-
-def get_logger():
-    logger = logging.getLogger()
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s %(levelname)s \t%(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
-    return logger
 
 
 def ensure_folder(folder):

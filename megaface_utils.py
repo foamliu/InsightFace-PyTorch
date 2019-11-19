@@ -2,14 +2,12 @@ import argparse
 import json
 import os
 import struct
-import time
 
 import cv2 as cv
 import numpy as np
 import torch
 import tqdm
 from PIL import Image
-from torch import nn
 from tqdm import tqdm
 
 from config import device
@@ -50,34 +48,17 @@ def crop(path, oldkey, newkey):
     print('{} images were cropped successfully.'.format(filecounter))
 
 
-def gen_feature(path, model=None):
-    transformer = data_transforms['val']
+def get_image(transformer, filepath, flip=False):
+    img = cv.imread(filepath)
+    if flip:
+        img = cv.flip(img, 1)
+    img = img[..., ::-1]  # RGB
+    img = Image.fromarray(img, 'RGB')  # RGB
+    img = transformer(img)
+    return img.to(device)
 
-    if model is None:
-        # checkpoint = 'BEST_checkpoint.tar'
-        # print('loading model: {}...'.format(checkpoint))
-        # checkpoint = torch.load(checkpoint)
-        # model = checkpoint['model'].module.to(device)
-        filename = 'insight-face-v3.pt'
 
-        class HParams:
-            def __init__(self):
-                self.pretrained = False
-                self.use_se = True
-
-        config = HParams()
-
-        print('loading {}...'.format(filename))
-        start = time.time()
-        from models import resnet101
-
-        model = resnet101(config)
-        model.load_state_dict(torch.load(filename))
-        print('elapsed {} sec'.format(time.time() - start))
-
-        model = nn.DataParallel(model)
-        model = model.to(device)
-
+def gen_feature(path, model):
     model.eval()
 
     print('gen features {}...'.format(path))
@@ -87,6 +68,8 @@ def gen_feature(path, model=None):
         files.append(filepath)
     file_count = len(files)
 
+    transformer = data_transforms['val']
+
     batch_size = 128
 
     with torch.no_grad():
@@ -94,19 +77,19 @@ def gen_feature(path, model=None):
             end_idx = min(file_count, start_idx + batch_size)
             length = end_idx - start_idx
 
-            imgs_0 = torch.zeros([length, 3, 112, 112], dtype=torch.float)
+            imgs_0 = torch.zeros([length, 3, 112, 112], dtype=torch.float, device=device)
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs_0[idx] = get_image(filepath, transformer, flip=False)
+                imgs_0[idx] = get_image(transformer, filepath, flip=False)
 
             features_0 = model(imgs_0.to(device)).cpu().numpy()
 
-            imgs_1 = torch.zeros([length, 3, 112, 112], dtype=torch.float)
+            imgs_1 = torch.zeros([length, 3, 112, 112], dtype=torch.float, device=device)
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
-                imgs_1[idx] = get_image(filepath, transformer, flip=True)
+                imgs_1[idx] = get_image(transformer, filepath, flip=True)
 
             features_1 = model(imgs_1.to(device)).cpu().numpy()
 
@@ -116,14 +99,6 @@ def gen_feature(path, model=None):
                 tarfile = filepath + '_0.bin'
                 feature = features_0[idx] + features_1[idx]
                 write_feature(tarfile, feature / np.linalg.norm(feature))
-
-
-def get_image(filepath, transformer, flip=False):
-    img = Image.open(filepath).convert('RGB')
-    if flip:
-        img = img.transpose(Image.FLIP_LEFT_RIGHT)
-    img = transformer(img)
-    return img.to(device)
 
 
 def read_feature(filename):

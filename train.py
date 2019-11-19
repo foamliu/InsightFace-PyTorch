@@ -1,14 +1,15 @@
 import numpy as np
 import torch
 from torch import nn
+from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.tensorboard import SummaryWriter
 
-from config import device, grad_clip, print_freq, num_workers
+from config import device, grad_clip, print_freq, num_workers, logger
 from data_gen import ArcFaceDataset
 from focal_loss import FocalLoss
 from megaface_eval import megaface_test
 from models import resnet18, resnet34, resnet50, resnet101, resnet152, ArcMarginModel
-from utils import parse_args, save_checkpoint, AverageMeter, accuracy, get_logger, adjust_learning_rate, clip_gradient
+from utils import parse_args, save_checkpoint, AverageMeter, accuracy, clip_gradient
 
 
 def train_net(args):
@@ -32,9 +33,6 @@ def train_net(args):
             model = resnet101(args)
         elif args.network == 'r152':
             model = resnet152(args)
-        elif args.network == 'mobile':
-            from mobilenet_v2 import MobileNetV2
-            model = MobileNetV2()
         else:
             raise TypeError('network {} is not supported.'.format(args.network))
 
@@ -44,10 +42,12 @@ def train_net(args):
 
         if args.optimizer == 'sgd':
             optimizer = torch.optim.SGD([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
-                                        lr=args.lr, momentum=args.mom, weight_decay=args.weight_decay)
+                                        lr=args.lr, momentum=args.mom, nesterov=True, weight_decay=args.weight_decay)
         else:
             optimizer = torch.optim.Adam([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
                                          lr=args.lr, weight_decay=args.weight_decay)
+
+        scheduler = MultiStepLR(optimizer, milestones=[10, 20, 30, 40], gamma=0.1)
 
     else:
         checkpoint = torch.load(checkpoint)
@@ -56,8 +56,7 @@ def train_net(args):
         model = checkpoint['model']
         metric_fc = checkpoint['metric_fc']
         optimizer = checkpoint['optimizer']
-
-    logger = get_logger()
+        scheduler = checkpoint['scheduler']
 
     # Move to GPU, if available
     model = model.to(device)
@@ -76,28 +75,15 @@ def train_net(args):
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        # Decay learning rate if there is no improvement for 2 consecutive epochs, and terminate training after 10
-        if epochs_since_improvement == 10:
-            break
-        if epochs_since_improvement > 0 and epochs_since_improvement % 2 == 0:
-            checkpoint = 'BEST_checkpoint.tar'
-            checkpoint = torch.load(checkpoint)
-            model = checkpoint['model']
-            metric_fc = checkpoint['metric_fc']
-            optimizer = checkpoint['optimizer']
-
-            adjust_learning_rate(optimizer, 0.5)
-
         # One epoch's training
         train_loss, train_top1_accs = train(train_loader=train_loader,
                                             model=model,
                                             metric_fc=metric_fc,
                                             criterion=criterion,
                                             optimizer=optimizer,
-                                            epoch=epoch,
-                                            logger=logger)
+                                            epoch=epoch)
         lr = optimizer.param_groups[0]['lr']
-        print('\nCurrent effective learning rate: {}\n'.format(lr))
+        logger.info('\nCurrent effective learning rate: {}\n'.format(lr))
         # print('Step num: {}\n'.format(optimizer.step_num))
 
         writer.add_scalar('model/train_loss', train_loss, epoch)
@@ -113,15 +99,16 @@ def train_net(args):
         best_acc = max(megaface_acc, best_acc)
         if not is_best:
             epochs_since_improvement += 1
-            print("\nEpochs since last improvement: %d\n" % (epochs_since_improvement,))
+            logger.info("\nEpochs since last improvement: %d\n" % (epochs_since_improvement,))
         else:
             epochs_since_improvement = 0
 
         # Save checkpoint
-        save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, best_acc, is_best)
+        save_checkpoint(epoch, epochs_since_improvement, model, metric_fc, optimizer, best_acc, is_best, scheduler)
+        scheduler.step(epoch)
 
 
-def train(train_loader, model, metric_fc, criterion, optimizer, epoch, logger):
+def train(train_loader, model, metric_fc, criterion, optimizer, epoch):
     model.train()  # train mode (dropout and batchnorm is used)
     metric_fc.train()
 
