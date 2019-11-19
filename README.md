@@ -22,7 +22,7 @@ year={2018}
 
 |Models|MegaFace|LFW|Download|
 |---|---|---|---|
-|SE-LResNet101E-IR|97.09%|99.80%|[Link](https://github.com/foamliu/InsightFace-v3/releases/download/v1.0/BEST_checkpoint.tar)|
+|SE-LResNet101E-IR|97.43%|99.80%|[Link](https://github.com/foamliu/InsightFace-v3/releases/download/v1.0/BEST_checkpoint.tar)|
 
 
 ## Dataset
