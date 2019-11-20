@@ -6,7 +6,7 @@ import torch.utils.model_zoo as model_zoo
 import torchvision
 from torch import nn
 from torch.nn import Parameter
-from torchsummary import summary
+from torchscope import scope
 
 from config import device, num_classes
 from silu import SiLU, silu
@@ -300,5 +300,5 @@ if __name__ == "__main__":
     from utils import parse_args
 
     args = parse_args()
-    model = resnet152(args).to(device)
-    summary(model, (3, 112, 112))
+    model = resnet101(args)
+    scope(model, (3, 112, 112))
