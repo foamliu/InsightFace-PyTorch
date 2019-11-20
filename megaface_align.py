@@ -43,6 +43,5 @@ def megaface_align(src, dst):
 
 
 if __name__ == '__main__':
-    src = 'megaface/MegaFace'
-    dst = 'megaface/MegaFace_aligned'
-    megaface_align(src, dst)
+    megaface_align('megaface/MegaFace', 'megaface/MegaFace_aligned')
+    megaface_align('megaface/FaceScrub', 'megaface/FaceScrub_aligned')
