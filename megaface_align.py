@@ -7,7 +7,7 @@ from PIL import Image
 # from torch.multiprocessing import Pool
 from tqdm import tqdm
 
-from retinaface.detector import detect_faces
+from mtcnn.detector import detect_faces
 from utils import select_central_face, align_face
 
 
