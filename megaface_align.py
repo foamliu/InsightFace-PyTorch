@@ -3,12 +3,33 @@ import os
 import cv2 as cv
 import torch
 import tqdm
+from PIL import Image
 from torch.multiprocessing import Pool
 from tqdm import tqdm
 
+from retinaface.detector import detect_faces
+from utils import select_central_face, align_face
+
+
+def get_central_face_attributes(full_path):
+    try:
+        img = Image.open(full_path).convert('RGB')
+        _, bounding_boxes, landmarks = detect_faces(img)
+
+        if len(landmarks) > 0:
+            i = select_central_face(img.size, bounding_boxes)
+            return True, [bounding_boxes[i]], [landmarks[i]]
+
+    except KeyboardInterrupt:
+        raise
+    except ValueError:
+        pass
+    except IOError:
+        pass
+    return False, None, None
+
 
 def detect_face(data):
-    from utils import get_central_face_attributes, align_face
     src_path = data['src_path']
     dst_path = data['dst_path']
     with torch.no_grad():

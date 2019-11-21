@@ -1,32 +1,22 @@
 from __future__ import print_function
 
-import time
-
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
 from retinaface.data import cfg_mnet
 from retinaface.layers.functions.prior_box import PriorBox
+from retinaface.loader import load_model
 from retinaface.utils.box_utils import decode, decode_landm
 from retinaface.utils.nms.py_cpu_nms import py_cpu_nms
 
-confidence_threshold = 0.6
-top_k = 5000
-nms_threshold = 0.4
-keep_top_k = 750
+cudnn.benchmark = True
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = load_model().to(device)
+model.eval()
 
 
-def detect(net, img_raw):
-    net.eval()
-
-    # print(net)
-    cudnn.benchmark = True
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # sets device for model and PyTorch tensors
-    net = net.to(device)
-
-    resize = 1
-
+def detect_faces(img_raw, confidence_threshold=0.6, top_k=5000, nms_threshold=0.4, keep_top_k=750, resize=1):
     img = np.float32(img_raw)
     im_height, im_width = img.shape[:2]
     scale = torch.Tensor([img.shape[1], img.shape[0], img.shape[1], img.shape[0]])
@@ -36,9 +26,10 @@ def detect(net, img_raw):
     img = img.to(device)
     scale = scale.to(device)
 
-    tic = time.time()
-    loc, conf, landms = net(img)  # forward pass
-    # print('net forward time: {:.4f}'.format(time.time() - tic))
+    # tic = time.time()
+    with torch.no_grad():
+        loc, conf, landms = model(img)  # forward pass
+        # print('net forward time: {:.4f}'.format(time.time() - tic))
 
     priorbox = PriorBox(cfg_mnet, image_size=(im_height, im_width))
     priors = priorbox.forward()
