@@ -4,7 +4,7 @@ import cv2 as cv
 import torch
 import tqdm
 from PIL import Image
-# from torch.multiprocessing import Pool
+from torch.multiprocessing import Pool
 from tqdm import tqdm
 
 from mtcnn.detector import detect_faces
@@ -54,11 +54,11 @@ def megaface_align(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    # with Pool(1) as p:
-    #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
+    with Pool(16) as p:
+        r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    for image_path in tqdm(image_paths):
-        detect_face(image_path)
+    # for image_path in tqdm(image_paths):
+    #     detect_face(image_path)
 
     print('Completed!')
 
