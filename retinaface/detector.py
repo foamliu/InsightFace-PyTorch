@@ -11,8 +11,8 @@ from retinaface.utils.box_utils import decode, decode_landm
 from retinaface.utils.nms.py_cpu_nms import py_cpu_nms
 
 cudnn.benchmark = True
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cpu')
 model = load_model().to(device)
 model.eval()
 
