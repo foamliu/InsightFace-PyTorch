@@ -7,7 +7,7 @@ from PIL import Image
 from torch.multiprocessing import Pool
 from tqdm import tqdm
 
-from retinaface.detector import detect_faces
+from mtcnn.detector import detect_faces
 from utils import select_central_face, align_face
 
 
@@ -54,7 +54,7 @@ def megaface_align(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    with Pool(16) as p:
+    with Pool(4) as p:
         r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
     # for image_path in tqdm(image_paths):
