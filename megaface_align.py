@@ -7,11 +7,10 @@ from PIL import Image
 from torch.multiprocessing import Pool
 from tqdm import tqdm
 
-from retinaface.detector import detect_faces
-from utils import select_central_face, align_face
-
 
 def get_central_face_attributes(full_path):
+    from retinaface.detector import detect_faces
+    from utils import select_central_face
     try:
         img = Image.open(full_path).convert('RGB')
         _, bounding_boxes, landmarks = detect_faces(img)
@@ -30,6 +29,8 @@ def get_central_face_attributes(full_path):
 
 
 def detect_face(data):
+    from utils import align_face
+
     src_path = data['src_path']
     dst_path = data['dst_path']
     with torch.no_grad():
@@ -54,7 +55,7 @@ def megaface_align(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    with Pool(12) as p:
+    with Pool(4) as p:
         r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
     # for image_path in tqdm(image_paths):
