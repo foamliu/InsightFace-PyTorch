@@ -4,7 +4,7 @@ import cv2 as cv
 import torch
 import tqdm
 from PIL import Image
-from torch.multiprocessing import Pool
+# from torch.multiprocessing import Pool
 from tqdm import tqdm
 
 from retinaface.detector import detect_faces
