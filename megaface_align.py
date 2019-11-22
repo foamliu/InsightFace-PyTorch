@@ -38,8 +38,9 @@ def detect_face(data):
         has_face, bboxes, landmarks = get_central_face_attributes(src_path)
         if has_face:
             img = align_face(src_path, landmarks)
+            dirname = os.path.dirname(dst_path)
+            os.makedirs(dirname)
             cv.imwrite(dst_path, img)
-            print(dst_path)
 
     return True
 
