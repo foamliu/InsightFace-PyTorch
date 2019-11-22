@@ -13,7 +13,7 @@ def get_central_face_attributes(full_path):
     from utils import select_central_face
     try:
         img = Image.open(full_path).convert('RGB')
-        _, bounding_boxes, landmarks = detect_faces(img)
+        bounding_boxes, landmarks = detect_faces(img)
 
         if len(landmarks) > 0:
             i = select_central_face(img.size, bounding_boxes)

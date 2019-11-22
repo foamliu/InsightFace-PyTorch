@@ -74,4 +74,5 @@ def detect_faces(img_raw, confidence_threshold=0.6, top_k=5000, nms_threshold=0.
     scores = dets[:, 4]
     bounding_boxes = dets[:, :4]
 
-    return scores, bounding_boxes, landms
+    # return scores, bounding_boxes, landms
+    return bounding_boxes, landms
