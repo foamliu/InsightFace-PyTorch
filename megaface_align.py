@@ -1,3 +1,4 @@
+import argparse
 import os
 
 import cv2 as cv
@@ -55,15 +56,34 @@ def megaface_align(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    # with Pool(4) as p:
-    #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
+    with Pool(2) as p:
+        r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    for image_path in tqdm(image_paths):
-        detect_face(image_path)
+    # for image_path in tqdm(image_paths):
+    #     detect_face(image_path)
 
     print('Completed!')
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Train face network')
+    # general
+    parser.add_argument('--src', type=str, default='megaface/MegaFace', help='src path')
+    parser.add_argument('--dst', type=str, default='megaface/MegaFace_aligned', help='dst path')
+    args = parser.parse_args()
+    return args
+
+
 if __name__ == '__main__':
-    megaface_align('megaface/MegaFace', 'megaface/MegaFace_aligned')
-    megaface_align('megaface/FaceScrub', 'megaface/FaceScrub_aligned')
+    args = parse_args()
+
+    src = args.src
+    dst = args.dst
+
+    megaface_align(src, dst)
+
+    # megaface_align('megaface/MegaFace', 'megaface/MegaFace_aligned')
+    # megaface_align('megaface/FaceScrub', 'megaface/FaceScrub_aligned')
+
+    # python3 megaface_align.py --src megaface/MegaFace --dst megaface/MegaFace_aligned
+    # python3 megaface_align.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
