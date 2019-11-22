@@ -72,6 +72,8 @@ def parse_args():
     # general
     parser.add_argument('--src', type=str, default='megaface/MegaFace', help='src path')
     parser.add_argument('--dst', type=str, default='megaface/MegaFace_aligned', help='dst path')
+    parser.add_argument('--pool', type=int, default=2, help='processes')
+
     args = parser.parse_args()
     return args
 
@@ -88,4 +90,4 @@ if __name__ == '__main__':
     # megaface_align('megaface/FaceScrub', 'megaface/FaceScrub_aligned')
 
     # CUDA_VISIBLE_DEVICES=0 python3 megaface_align.py --src megaface/MegaFace --dst megaface/MegaFace_aligned
-    # CUDA_VISIBLE_DEVICES=1 python3 megaface_align.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
+    # CUDA_VISIBLE_DEVICES=1 python3 megaface_align.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned --pool 1
