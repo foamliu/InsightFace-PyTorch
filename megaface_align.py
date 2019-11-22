@@ -39,7 +39,7 @@ def detect_face(data):
         if has_face:
             img = align_face(src_path, landmarks)
             dirname = os.path.dirname(dst_path)
-            os.makedirs(dirname)
+            os.makedirs(dirname, exist_ok=True)
             cv.imwrite(dst_path, img)
 
     return True
