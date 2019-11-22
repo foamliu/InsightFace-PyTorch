@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import os
+import shutil
 
 if __name__ == "__main__":
     folder = 'FaceScrub'
@@ -8,7 +9,7 @@ if __name__ == "__main__":
     for d in folders:
         src = os.path.join(folder, d)
         dst = os.path.join(folder, d.replace('\'', ''))
-        os.rename(src, dst)
+        shutil.move(src, dst)
 
     # image_paths = []
     # for dirName, subdirList, fileList in tqdm(os.walk(folder)):
