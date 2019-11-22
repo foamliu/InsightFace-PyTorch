@@ -5,7 +5,7 @@ import shutil
 if __name__ == "__main__":
     folder = 'FaceScrub'
 
-    folders = [d for d in os.listdir(folder)]
+    folders = [d for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d))]
     for d in folders:
         src = os.path.join(folder, d)
         dst = os.path.join(folder, d.replace('\'', ''))
