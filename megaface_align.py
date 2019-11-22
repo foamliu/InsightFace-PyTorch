@@ -39,6 +39,7 @@ def detect_face(data):
         if has_face:
             img = align_face(src_path, landmarks)
             cv.imwrite(dst_path, img)
+            print(dst_path)
 
     return True
 
