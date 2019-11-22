@@ -9,6 +9,7 @@ if __name__ == "__main__":
     for d in folders:
         src = os.path.join(folder, d)
         dst = os.path.join(folder, d.replace('\'', ''))
+        print('{} -> {}'.format(src, dst))
         shutil.move(src, dst)
 
     # image_paths = []
