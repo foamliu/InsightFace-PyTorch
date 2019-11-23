@@ -8,7 +8,7 @@ from megaface_utils import gen_feature, remove_noise
 
 
 def megaface_test(model):
-    cmd = 'find megaface/facescrub_images -name "*.bin" -type f -delete'
+    cmd = 'find megaface/FaceScrub_aligned -name "*.bin" -type f -delete'
     print(cmd)
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
     print(output)
@@ -18,11 +18,11 @@ def megaface_test(model):
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
     print(output)
 
-    gen_feature('megaface/facescrub_images', model)
+    gen_feature('megaface/FaceScrub_aligned', model)
     gen_feature('megaface/MegaFace_aligned/FlickrFinal2', model)
     remove_noise()
 
-    cmd = 'python megaface/devkit/experiments/run_experiment.py -p megaface/devkit/templatelists/facescrub_uncropped_features_list.json megaface/MegaFace_aligned/FlickrFinal2 megaface/facescrub_images _0.bin results -s 1000000'
+    cmd = 'python megaface/devkit/experiments/run_experiment.py -p megaface/devkit/templatelists/facescrub_uncropped_features_list.json megaface/MegaFace_aligned/FlickrFinal2 megaface/FaceScrub_aligned _0.bin results -s 1000000'
     # print(cmd)
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
     # print(output)
