@@ -55,7 +55,7 @@ class PNet(nn.Module):
         self.conv4_2 = nn.Conv2d(32, 4, 1, 1)
 
         weights = np.load('mtcnn/weights/pnet.npy', allow_pickle=True)[()]
-        print('Finished loading PNet model!')
+        # print('Finished loading PNet model!')
         for n, p in self.named_parameters():
             p.data = torch.FloatTensor(weights[n])
 
@@ -100,7 +100,7 @@ class RNet(nn.Module):
         self.conv5_2 = nn.Linear(128, 4)
 
         weights = np.load('mtcnn/weights/rnet.npy', allow_pickle=True)[()]
-        print('Finished loading RNet model!')
+        # print('Finished loading RNet model!')
         for n, p in self.named_parameters():
             p.data = torch.FloatTensor(weights[n])
 
@@ -151,7 +151,7 @@ class ONet(nn.Module):
         self.conv6_3 = nn.Linear(256, 10)
 
         weights = np.load('mtcnn/weights/onet.npy', allow_pickle=True)[()]
-        print('Finished loading ONet model!')
+        # print('Finished loading ONet model!')
         for n, p in self.named_parameters():
             p.data = torch.FloatTensor(weights[n])
 

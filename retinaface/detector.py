@@ -71,8 +71,12 @@ def detect_faces(img_raw, confidence_threshold=0.6, top_k=5000, nms_threshold=0.
     dets = dets[:keep_top_k, :]
     landms = landms[:keep_top_k, :]
 
-    scores = dets[:, 4]
-    bounding_boxes = dets[:, :4]
+    landms = landms.reshape((-1, 5, 2))
+    landms = landms.transpose()
+    landms = landms.reshape((-1, 10,))
+
+    # scores = dets[:, 4]
+    # bounding_boxes = dets[:, :4]
 
     # return scores, bounding_boxes, landms
-    return bounding_boxes, landms
+    return dets, landms
