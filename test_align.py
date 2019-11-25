@@ -12,6 +12,12 @@ def show_bboxes(full_path, bboxes, landmarks):
     # show image
     for i in range(num_faces):
         b = bboxes[i]
+        width = b[2] - b[0]
+        height = b[3] - b[1]
+        area = width * height
+        print('width: ' + str(width))
+        print('height: ' + str(height))
+        print('area: ' + str(area))
         scores = bboxes[:, 4]
         text = "{:.4f}".format(scores[i])
         b = list(map(int, b))
