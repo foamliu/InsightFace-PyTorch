@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 
 def get_central_face_attributes(full_path):
-    from retinaface.detector import detect_faces
+    from mtcnn.detector import detect_faces
     from utils import select_central_face
     try:
         img = Image.open(full_path).convert('RGB')
