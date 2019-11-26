@@ -2,42 +2,40 @@ import argparse
 import os
 
 import cv2 as cv
-import torch
 import tqdm
-from PIL import Image
 from torch.multiprocessing import Pool
 from tqdm import tqdm
 
 
-def get_central_face_attributes(full_path):
-    from mtcnn.detector import detect_faces
-    from utils import select_central_face
-    try:
-        img = Image.open(full_path).convert('RGB')
-        bounding_boxes, landmarks = detect_faces(img)
+def resize(img):
+    max_size = 600
+    h, w = img.shape[:2]
+    if h <= max_size and w <= max_size:
+        return img
+    if h > w:
+        ratio = max_size / h
+    else:
+        ratio = max_size / w
 
-        if len(landmarks) > 0:
-            i = select_central_face(img.size, bounding_boxes)
-            return True, [bounding_boxes[i]], [landmarks[i]]
-
-    except KeyboardInterrupt:
-        raise
-    except ValueError:
-        pass
-    except IOError:
-        pass
-    return False, None, None
+    img = cv.resize(img, (int(round(w * ratio)), int(round(h * ratio))))
+    return img
 
 
 def detect_face(data):
-    from utils import align_face
+    from retinaface.detector import detect_faces
+    from utils import select_significant_face, align_face
 
     src_path = data['src_path']
     dst_path = data['dst_path']
-    with torch.no_grad():
-        has_face, bboxes, landmarks = get_central_face_attributes(src_path)
-        if has_face:
-            img = align_face(src_path, landmarks)
+
+    img_raw = cv.imread(src_path)
+    if img_raw is not None:
+        img = resize(img_raw)
+        bboxes, landmarks = detect_faces(img, top_k=5, keep_top_k=5)
+        if len(bboxes) > 0:
+            i = select_significant_face(bboxes)
+            bbox, landms = bboxes[i], landmarks[i]
+            img = align_face(img, [landms])
             dirname = os.path.dirname(dst_path)
             os.makedirs(dirname, exist_ok=True)
             cv.imwrite(dst_path, img)

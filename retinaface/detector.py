@@ -17,7 +17,7 @@ model = load_model().to(device)
 model.eval()
 
 
-def detect_faces(img_raw, confidence_threshold=0.6, top_k=5000, nms_threshold=0.4, keep_top_k=750, resize=1):
+def detect_faces(img_raw, confidence_threshold=0.9, top_k=5000, nms_threshold=0.4, keep_top_k=750, resize=1):
     img = np.float32(img_raw)
     im_height, im_width = img.shape[:2]
     scale = torch.Tensor([img.shape[1], img.shape[0], img.shape[1], img.shape[0]])
@@ -70,16 +70,12 @@ def detect_faces(img_raw, confidence_threshold=0.6, top_k=5000, nms_threshold=0.
     # keep top-K faster NMS
     dets = dets[:keep_top_k, :]
     landms = landms[:keep_top_k, :]
-    print(landms.shape)
+    # print(landms.shape)
     landms = landms.reshape((-1, 5, 2))
-    print(landms.shape)
+    # print(landms.shape)
     landms = landms.transpose((0, 2, 1))
-    print(landms.shape)
+    # print(landms.shape)
     landms = landms.reshape(-1, 10, )
-    print(landms.shape)
+    # print(landms.shape)
 
-    # scores = dets[:, 4]
-    # bounding_boxes = dets[:, :4]
-
-    # return scores, bounding_boxes, landms
     return dets, landms

@@ -10,7 +10,7 @@ from PIL import Image
 
 from align_faces import get_reference_facial_points, warp_and_crop_face
 from config import image_h, image_w
-from mtcnn.detector import detect_faces
+from retinaface.detector import detect_faces
 
 
 def clip_gradient(optimizer, grad_clip):
@@ -88,8 +88,8 @@ def accuracy(scores, targets, k=1):
     return correct_total.item() * (100.0 / batch_size)
 
 
-def align_face(img_fn, facial5points):
-    raw = cv.imread(img_fn, True)  # BGR
+def align_face(raw, facial5points):
+    # raw = cv.imread(img_fn, True)  # BGR
     facial5points = np.reshape(facial5points, (2, 5))
 
     crop_size = (image_h, image_w)
@@ -124,21 +124,19 @@ def get_face_attributes(full_path):
     return False, None
 
 
-def select_central_face(im_size, bounding_boxes):
-    width, height = im_size
-    nearest_index = -1
-    nearest_distance = float('inf')
+def select_significant_face(bounding_boxes):
+    best_index = -1
+    best_rank = float('-inf')
     for i, b in enumerate(bounding_boxes):
-        x_box_center = (b[0] + b[2]) / 2
-        y_box_center = (b[1] + b[3]) / 2
-        x_img = width / 2
-        y_img = height / 2
-        distance = math.sqrt((x_box_center - x_img) ** 2 + (y_box_center - y_img) ** 2)
-        if distance < nearest_distance:
-            nearest_distance = distance
-            nearest_index = i
+        bbox_w, bbox_h = b[2] - b[0], b[3] - b[1]
+        area = bbox_w * bbox_h
+        score = b[4]
+        rank = score * area
+        if rank > best_rank:
+            best_rank = rank
+            best_index = i
 
-    return nearest_index
+    return best_index
 
 
 def get_central_face_attributes(full_path):
@@ -147,7 +145,7 @@ def get_central_face_attributes(full_path):
         bounding_boxes, landmarks = detect_faces(img)
 
         if len(landmarks) > 0:
-            i = select_central_face(img.size, bounding_boxes)
+            i = select_significant_face(bounding_boxes)
             return True, [bounding_boxes[i]], [landmarks[i]]
 
     except KeyboardInterrupt:
