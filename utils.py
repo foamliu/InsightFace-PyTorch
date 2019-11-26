@@ -127,7 +127,7 @@ def get_face_attributes(full_path):
 def select_central_face(im_size, bounding_boxes):
     width, height = im_size
     nearest_index = -1
-    nearest_distance = 100000
+    nearest_distance = float('inf')
     for i, b in enumerate(bounding_boxes):
         x_box_center = (b[0] + b[2]) / 2
         y_box_center = (b[1] + b[3]) / 2
