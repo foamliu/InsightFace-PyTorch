@@ -70,7 +70,7 @@ def parse_args():
     # general
     parser.add_argument('--src', type=str, default='megaface/MegaFace', help='src path')
     parser.add_argument('--dst', type=str, default='megaface/MegaFace_aligned', help='dst path')
-    parser.add_argument('--size', type=int, default=2, help='processes')
+    parser.add_argument('--size', type=int, default=4, help='processes')
 
     args = parser.parse_args()
     return args
