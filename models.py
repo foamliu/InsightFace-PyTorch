@@ -3,13 +3,10 @@ import math
 import torch
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
-import torchvision
 from torch import nn
 from torch.nn import Parameter
-from torchscope import scope
 
 from config import device, num_classes
-# from silu import SiLU, silu
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152']
@@ -25,7 +22,8 @@ model_urls = {
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
+                     padding=1, bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -35,7 +33,7 @@ class BasicBlock(nn.Module):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.relu = nn.PReLU()(inplace=True)
+        self.relu = nn.ReLU(inplace=True)
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -67,11 +65,12 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
+                               padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * 4)
-        self.relu = nn.PReLU()
+        self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
 
@@ -156,20 +155,25 @@ class IRBlock(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, use_se=True):
+    def __init__(self, block, layers, use_se=True, im_size=112):
         self.inplanes = 64
         self.use_se = use_se
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.prelu = nn.PReLU()
-        self.layer1 = self._make_layer(block, 64, layers[0], stride=2)
+        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.bn2 = nn.BatchNorm2d(512)
         self.dropout = nn.Dropout()
-        self.conv2 = nn.Conv2d(512, 512, kernel_size=7, stride=1, groups=512)
+
+        if im_size == 112:
+            self.fc = nn.Linear(512 * 7 * 7, 512)
+        else:  # 224
+            self.fc = nn.Linear(512 * 14 * 14, 512)
         self.bn3 = nn.BatchNorm1d(512)
 
         for m in self.modules():
@@ -203,6 +207,7 @@ class ResNet(nn.Module):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.prelu(x)
+        x = self.maxpool(x)
 
         x = self.layer1(x)
         x = self.layer2(x)
@@ -211,9 +216,10 @@ class ResNet(nn.Module):
 
         x = self.bn2(x)
         x = self.dropout(x)
-        x = self.conv2(x)
         x = x.view(x.size(0), -1)
+        x = self.fc(x)
         x = self.bn3(x)
+
         return x
 
 
@@ -232,7 +238,7 @@ def resnet34(args, **kwargs):
 
 
 def resnet50(args, **kwargs):
-    model = ResNet(IRBlock, [3, 4, 6, 3], use_se=args.use_se, **kwargs)
+    model = ResNet(IRBlock, [3, 4, 6, 3], use_se=args.use_se, im_size=args.im_size, **kwargs)
     if args.pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
     return model
@@ -241,16 +247,7 @@ def resnet50(args, **kwargs):
 def resnet101(args, **kwargs):
     model = ResNet(IRBlock, [3, 4, 23, 3], use_se=args.use_se, **kwargs)
     if args.pretrained:
-        # load part of pre-trained model
-        model_dict = model.state_dict()
-        pretrained_dict = torchvision.models.resnet101(pretrained=True).state_dict()
-        # 1. filter out unnecessary keys
-        pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
-        # 2. overwrite entries in the existing state dict
-        model_dict.update(pretrained_dict)
-        # 3. load the new state dict
-        model.load_state_dict(pretrained_dict)
-
+        model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
     return model
 
 
@@ -258,11 +255,6 @@ def resnet152(args, **kwargs):
     model = ResNet(IRBlock, [3, 8, 36, 3], use_se=args.use_se, **kwargs)
     if args.pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet152']))
-    return model
-
-
-def resnet_face18(use_se=True, **kwargs):
-    model = ResNet(IRBlock, [2, 2, 2, 2], use_se=use_se, **kwargs)
     return model
 
 
@@ -296,12 +288,12 @@ class ArcMarginModel(nn.Module):
         one_hot.scatter_(1, label.view(-1, 1).long(), 1)
         output = (one_hot * phi) + ((1.0 - one_hot) * cosine)
         output *= self.s
-
         return output
 
 
 if __name__ == "__main__":
     from utils import parse_args
+    from torchscope import scope
 
     args = parse_args()
     model = resnet101(args)
