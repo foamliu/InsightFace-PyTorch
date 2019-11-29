@@ -96,6 +96,7 @@ def gen_feature(path, model):
             for idx in range(0, length):
                 i = start_idx + idx
                 filepath = files[i]
+                filepath = filepath.replace(' ', '_')
                 tarfile = filepath + '_0.bin'
                 feature = features_0[idx] + features_1[idx]
                 write_feature(tarfile, feature / np.linalg.norm(feature))
