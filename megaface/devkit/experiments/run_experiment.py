@@ -69,6 +69,7 @@ def main():
         for size in sizes:
             print('Creating feature list of {} photos for set {}'.format(size, str(index)))
             cur_list_name = megaface_list_basename + "_{}_{}".format(str(size), str(index))
+            print(cur_list_name)
             with open(cur_list_name) as fp:
                 featureFile = json.load(fp)
                 path_list = featureFile["path"]
