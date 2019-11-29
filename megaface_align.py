@@ -47,7 +47,7 @@ def megaface_align(src, dst, size):
     image_paths = []
     for dirName, subdirList, fileList in tqdm(os.walk(src)):
         for fname in fileList:
-            if fname.lower().endswith('.jpg'):
+            if fname.lower().endswith(('.jpg', '.png')):
                 src_path = os.path.join(dirName, fname)
                 dst_path = os.path.join(dirName.replace(src, dst), fname).replace(' ', '_')
                 image_paths.append({'src_path': src_path, 'dst_path': dst_path})
