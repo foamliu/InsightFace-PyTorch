@@ -66,6 +66,8 @@ def gen_feature(path, model):
     files = []
     for filepath in walkdir(path, '.jpg'):
         files.append(filepath)
+    for filepath in walkdir(path, '.png'):
+        files.append(filepath)
     file_count = len(files)
 
     transformer = data_transforms['val']
