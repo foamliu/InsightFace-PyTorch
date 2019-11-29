@@ -49,7 +49,7 @@ def megaface_align(src, dst, size):
         for fname in fileList:
             if fname.lower().endswith('.jpg'):
                 src_path = os.path.join(dirName, fname)
-                dst_path = os.path.join(dirName.replace(src, dst).replace(' ', '_'), fname)
+                dst_path = os.path.join(dirName.replace(src, dst), fname).replace(' ', '_')
                 image_paths.append({'src_path': src_path, 'dst_path': dst_path})
 
     # print(image_paths[:20])
