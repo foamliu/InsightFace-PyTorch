@@ -118,8 +118,9 @@ def main():
     print('Running probe to probe comparison')
     probe_score_filename = os.path.join(
         other_out_root, '{}_{}_{}.bin'.format(probe_name, probe_name, alg_name))
-    proc = subprocess.Popen(
-        [IDENTIFICATION_EXE, model, "path", probe_feature_list, probe_feature_list, probe_score_filename])
+    args = [IDENTIFICATION_EXE, model, "path", probe_feature_list, probe_feature_list, probe_score_filename]
+    print(args)
+    proc = subprocess.Popen(args)
     proc.communicate()
 
     for index in set_indices:
@@ -133,6 +134,7 @@ def main():
                                                                                                  distractor_name,
                                                                                                  alg_name, str(size),
                                                                                                  str(index)))]
+            print(args)
             proc = subprocess.Popen(args)
             proc.communicate()
 
@@ -147,6 +149,7 @@ def main():
                 probe_name, distractor_name, alg_name, str(size), str(index)))]
             args += [os.path.join(out_root, "matches_{}_{}_{}_{}_{}.json".format(
                 probe_name, distractor_name, alg_name, str(size), str(index)))]
+            print(args)
             proc = subprocess.Popen(args)
             proc.communicate()
 
