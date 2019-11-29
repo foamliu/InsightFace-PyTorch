@@ -69,11 +69,11 @@ if __name__ == '__main__':
 
     model = nn.DataParallel(model)
 
-    scripted_model_file = 'mobilefacenet_scripted.pt'
-    print('loading {}...'.format(scripted_model_file))
-    model = torch.jit.load(scripted_model_file)
-    # model = nn.DataParallel(model)
-    model = model.to(device)
-    model.eval()
+    # scripted_model_file = 'mobilefacenet_scripted.pt'
+    # print('loading {}...'.format(scripted_model_file))
+    # model = torch.jit.load(scripted_model_file)
+    # # model = nn.DataParallel(model)
+    # model = model.to(device)
+    # model.eval()
 
     megaface_test(model)
