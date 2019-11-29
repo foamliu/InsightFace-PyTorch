@@ -9,7 +9,7 @@ from torch.nn import Parameter
 from torchscope import scope
 
 from config import device, num_classes
-from silu import SiLU, silu
+# from silu import SiLU, silu
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152']
@@ -35,6 +35,7 @@ class BasicBlock(nn.Module):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
+        self.relu = nn.PReLU()(inplace=True)
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -45,7 +46,7 @@ class BasicBlock(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = silu(out)
+        out = self.relu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
@@ -54,7 +55,7 @@ class BasicBlock(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = silu(out)
+        out = self.relu(out)
 
         return out
 
@@ -70,6 +71,7 @@ class Bottleneck(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * 4)
+        self.relu = nn.PReLU()
         self.downsample = downsample
         self.stride = stride
 
@@ -78,11 +80,11 @@ class Bottleneck(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = silu(out)
+        out = self.relu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
-        out = silu(out)
+        out = self.relu(out)
 
         out = self.conv3(out)
         out = self.bn3(out)
@@ -91,7 +93,7 @@ class Bottleneck(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = silu(out)
+        out = self.relu(out)
 
         return out
 
@@ -102,7 +104,7 @@ class SEBlock(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
             nn.Linear(channel, channel // reduction),
-            SiLU(),
+            nn.PReLU(),
             nn.Linear(channel // reduction, channel),
             nn.Sigmoid()
         )
@@ -122,6 +124,7 @@ class IRBlock(nn.Module):
         self.bn0 = nn.BatchNorm2d(inplanes)
         self.conv1 = conv3x3(inplanes, inplanes)
         self.bn1 = nn.BatchNorm2d(inplanes)
+        self.prelu = nn.PReLU()
         self.conv2 = conv3x3(inplanes, planes, stride)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
@@ -135,7 +138,7 @@ class IRBlock(nn.Module):
         out = self.bn0(x)
         out = self.conv1(out)
         out = self.bn1(out)
-        out = silu(out)
+        out = self.prelu(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
@@ -146,7 +149,7 @@ class IRBlock(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = silu(out)
+        out = self.prelu(out)
 
         return out
 
@@ -159,6 +162,7 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
+        self.prelu = nn.PReLU()
         self.layer1 = self._make_layer(block, 64, layers[0], stride=2)
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
@@ -198,7 +202,7 @@ class ResNet(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
-        x = silu(x)
+        x = self.prelu(x)
 
         x = self.layer1(x)
         x = self.layer2(x)
