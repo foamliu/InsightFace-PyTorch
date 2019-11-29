@@ -64,9 +64,7 @@ def gen_feature(path, model):
     print('gen features {}...'.format(path))
     # Preprocess the total files count
     files = []
-    for filepath in walkdir(path, '.jpg'):
-        files.append(filepath)
-    for filepath in walkdir(path, '.png'):
+    for filepath in walkdir(path, ('.jpg', '.png')):
         files.append(filepath)
     file_count = len(files)
 
