@@ -48,32 +48,33 @@ if __name__ == '__main__':
     # model = checkpoint['model'].module.to(device)
     # model.eval()
 
-    # filename = 'insight-face-v3.pt'
-    #
-    #
-    # class HParams:
-    #     def __init__(self):
-    #         self.pretrained = False
-    #         self.use_se = True
-    #
-    #
-    # config = HParams()
-    #
-    # print('loading {}...'.format(filename))
-    # start = time.time()
-    # from models import resnet101
-    #
-    # model = resnet101(config)
-    # model.load_state_dict(torch.load(filename))
-    # print('elapsed {} sec'.format(time.time() - start))
-    #
-    # model = nn.DataParallel(model)
+    filename = 'insight-face-v3.pt'
 
-    scripted_model_file = 'mobilefacenet_scripted.pt'
-    print('loading {}...'.format(scripted_model_file))
-    model = torch.jit.load(scripted_model_file)
-    # model = nn.DataParallel(model)
-    model = model.to(device)
+
+    class HParams:
+        def __init__(self):
+            self.pretrained = False
+            self.use_se = True
+
+
+    config = HParams()
+
+    print('loading {}...'.format(filename))
+    start = time.time()
+    from models import resnet101
+
+    model = resnet101(config)
+    model.load_state_dict(torch.load(filename))
+    print('elapsed {} sec'.format(time.time() - start))
+
+    model = nn.DataParallel(model)
     model.eval()
+
+    # scripted_model_file = 'mobilefacenet_scripted.pt'
+    # print('loading {}...'.format(scripted_model_file))
+    # model = torch.jit.load(scripted_model_file)
+    # # model = nn.DataParallel(model)
+    # model = model.to(device)
+    # model.eval()
 
     megaface_test(model)
