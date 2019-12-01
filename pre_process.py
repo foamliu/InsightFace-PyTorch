@@ -22,7 +22,7 @@ if __name__ == "__main__":
             img = mx.image.imdecode(s).asnumpy()
             img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
             label = int(header.label)
-            filename = '{}.png'.format(i)
+            filename = '{}.jpg'.format(i)
             samples.append({'img': filename, 'label': label})
             filename = os.path.join(IMG_DIR, filename)
             cv.imwrite(filename, img)
