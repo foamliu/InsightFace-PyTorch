@@ -16,8 +16,8 @@ if __name__ == "__main__":
     samples = []
     class_ids = set()
 
-    # %% 1 ~ 3804847
-    for i in tqdm(range(10000000)):
+    # %% 1 ~ 5822653
+    for i in tqdm(range(5822653)):
         try:
             header, s = recordio.unpack(imgrec.read_idx(i + 1))
             img = mx.image.imdecode(s).asnumpy()
