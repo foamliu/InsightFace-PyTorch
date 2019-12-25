@@ -83,7 +83,8 @@ def gen_feature(path, model):
                 filepath = files[i]
                 imgs_0[idx] = get_image(transformer, filepath, flip=False)
 
-            features_0 = model(imgs_0.to(device)).cpu().numpy()
+            features_0 = model(imgs_0.to(device))
+            features_0 = features_0.cpu().numpy()
 
             imgs_1 = torch.zeros([length, 3, 112, 112], dtype=torch.float, device=device)
             for idx in range(0, length):
@@ -91,7 +92,8 @@ def gen_feature(path, model):
                 filepath = files[i]
                 imgs_1[idx] = get_image(transformer, filepath, flip=True)
 
-            features_1 = model(imgs_1.to(device)).cpu().numpy()
+            features_1 = model(imgs_1.to(device))
+            features_1 = features_1.cpu().numpy()
 
             for idx in range(0, length):
                 i = start_idx + idx

@@ -68,6 +68,7 @@ if __name__ == '__main__':
     print('elapsed {} sec'.format(time.time() - start))
 
     model = nn.DataParallel(model)
+    model = model.to(device)
     model.eval()
 
     # scripted_model_file = 'mobilefacenet_scripted.pt'
