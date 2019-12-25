@@ -31,7 +31,7 @@ def detect_face(data):
     img_raw = cv.imread(src_path)
     if img_raw is not None:
         img = resize(img_raw)
-        bboxes, landmarks = detect_faces(img, min_face_size=100)
+        bboxes, landmarks = detect_faces(img, min_face_size=100.0)
         if len(bboxes) > 0:
             i = select_significant_face(bboxes)
             bbox, landms = bboxes[i], landmarks[i]
