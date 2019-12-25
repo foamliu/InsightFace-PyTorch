@@ -22,7 +22,7 @@ def resize(img):
 
 
 def detect_face(data):
-    from retinaface.detector import detect_faces
+    from mtcnn.detector import detect_faces
     from utils import select_significant_face, align_face
 
     src_path = data['src_path']
@@ -31,7 +31,7 @@ def detect_face(data):
     img_raw = cv.imread(src_path)
     if img_raw is not None:
         img = resize(img_raw)
-        bboxes, landmarks = detect_faces(img, top_k=5, keep_top_k=5)
+        bboxes, landmarks = detect_faces(img, min_face_size=100)
         if len(bboxes) > 0:
             i = select_significant_face(bboxes)
             bbox, landms = bboxes[i], landmarks[i]
