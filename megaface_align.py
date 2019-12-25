@@ -3,7 +3,6 @@ import os
 
 import cv2 as cv
 import tqdm
-from torch.multiprocessing import Pool
 from tqdm import tqdm
 
 
@@ -21,8 +20,7 @@ def resize(img):
     return img
 
 
-def detect_face(data):
-    from mtcnn.detector import detect_faces
+def detect_face(detector, data):
     from utils import select_significant_face, align_face
 
     src_path = data['src_path']
@@ -31,7 +29,7 @@ def detect_face(data):
     img_raw = cv.imread(src_path)
     if img_raw is not None:
         img = resize(img_raw)
-        bboxes, landmarks = detect_faces(img, min_face_size=100.0)
+        bboxes, landmarks = detector.detect_faces(img, min_face_size=100.0)
         if len(bboxes) > 0:
             i = select_significant_face(bboxes)
             bbox, landms = bboxes[i], landmarks[i]
@@ -56,11 +54,14 @@ def megaface_align(src, dst, size):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
+    from mtcnn.detector import Detector
+    detector = Detector()
+
     # with Pool(size) as p:
     #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
     for image_path in tqdm(image_paths):
-        detect_face(image_path)
+        detect_face(detector, image_path)
 
     print('Completed!')
 
