@@ -54,16 +54,16 @@ def bb_intersection_over_union(boxA, boxB):
     # determine the (x, y)-coordinates of the intersection rectangle
     xA = max(boxA[0], boxB[0])
     yA = max(boxA[1], boxB[1])
-    xB = min(boxA[0] + boxA[2], boxB[0] + boxB[2])
-    yB = min(boxA[1] + boxA[3], boxB[1] + boxB[3])
+    xB = min(boxA[2], boxB[2])
+    yB = min(boxA[3], boxB[3])
 
     # compute the area of intersection rectangle
     interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
 
     # compute the area of both the prediction and ground-truth
     # rectangles
-    boxAArea = boxA[2] * boxA[3]
-    boxBArea = boxB[2] * boxB[3]
+    boxAArea = (boxA[2] - boxA[0] + 1) * (boxA[3] - boxA[1] + 1)
+    boxBArea = (boxB[2] - boxB[0] + 1) * (boxB[3] - boxB[1] + 1)
 
     # compute the intersection over union by taking the intersection
     # area and dividing it by the sum of prediction + ground-truth
@@ -98,30 +98,32 @@ def detect_face(data):
     boxB = data['boxB']
 
     img_raw = cv.imread(src_path)
-    cv.rectangle(img_raw, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
-    cv.imshow('', img_raw)
-    cv.waitKey(0)
+    # cv.rectangle(img_raw, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
+    # cv.imshow('', img_raw)
+    # cv.waitKey(0)
 
-    #
-    #
-    # if img_raw is not None:
-    #     # img = resize(img_raw)
-    #     img = img_raw
-    #     try:
-    #         bboxes, landmarks = detector.detect_faces(img)
-    #
-    #         if len(bboxes) > 0:
-    #             i = select_face(bboxes, boxB)
-    #             bbox, landms = bboxes[i], landmarks[i]
-    #             img = align_face(img, [landms])
-    #             dirname = os.path.dirname(dst_path)
-    #             os.makedirs(dirname, exist_ok=True)
-    #             cv.imwrite(dst_path, img)
-    #
-    #     except ValueError as err:
-    #         print(err)
-    #     except cv.error as err:
-    #         print(err)
+    if img_raw is not None:
+        # img = resize(img_raw)
+        img = img_raw
+        try:
+            bboxes, landmarks = detector.detect_faces(img)
+
+            for bbox in bboxes:
+                bbox[2] = bbox[0] + bbox[2]
+                bbox[3] = bbox[1] + bbox[3]
+
+            if len(bboxes) > 0:
+                i = select_face(bboxes, boxB)
+                bbox, landms = bboxes[i], landmarks[i]
+                img = align_face(img, [landms])
+                dirname = os.path.dirname(dst_path)
+                os.makedirs(dirname, exist_ok=True)
+                cv.imwrite(dst_path, img)
+
+        except ValueError as err:
+            print(err)
+        except cv.error as err:
+            print(err)
 
     return True
 
