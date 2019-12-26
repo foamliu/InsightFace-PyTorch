@@ -105,15 +105,20 @@ def detect_face(data):
         boxB = boxB * ratio
         # boxB = boxB.astype(np.int)
 
-        bboxes, landmarks = detector.detect_faces(img)
+        try:
+            bboxes, landmarks = detector.detect_faces(img)
 
-        if len(bboxes) > 0:
-            i = select_face(bboxes, boxB)
-            bbox, landms = bboxes[i], landmarks[i]
-            img = align_face(img, [landms])
-            dirname = os.path.dirname(dst_path)
-            os.makedirs(dirname, exist_ok=True)
-            cv.imwrite(dst_path, img)
+            if len(bboxes) > 0:
+                i = select_face(bboxes, boxB)
+                bbox, landms = bboxes[i], landmarks[i]
+                img = align_face(img, [landms])
+                dirname = os.path.dirname(dst_path)
+                os.makedirs(dirname, exist_ok=True)
+                cv.imwrite(dst_path, img)
+        except ValueError as err:
+            print(err)
+        except cv.error as err:
+            print(err)
 
     return True
 
