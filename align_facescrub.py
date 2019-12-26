@@ -5,6 +5,7 @@ if __name__ == "__main__":
     for dirName, subdirList, fileList in os.walk('megaface/FaceScrub'):
         for fname in fileList:
             name, ext = os.path.splitext(fname)
+            ext = ext.lower()
             cnt[ext] += 1
     print(cnt)
 
