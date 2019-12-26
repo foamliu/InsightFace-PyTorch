@@ -1,5 +1,6 @@
 import argparse
 import os
+from multiprocessing import Pool
 
 import cv2 as cv
 import numpy as np
@@ -80,7 +81,7 @@ def select_face(bboxes, boxB):
 
     for idx, boxA in enumerate(bboxes):
         iou = bb_intersection_over_union(boxA, boxB)
-        print(iou)
+        # print(iou)
 
         if iou > max_iou:
             max_iou = max(iou, max_iou)
@@ -129,13 +130,13 @@ def align_facescrub(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    # with Pool(2) as p:
-    #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
+    with Pool(2) as p:
+        r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    for image_path in image_paths:
-        print(image_path)
-        detect_face(image_path)
-        # break
+    # for image_path in image_paths:
+    #     print(image_path)
+    #     detect_face(image_path)
+    #     # break
 
     print('Completed!')
 
