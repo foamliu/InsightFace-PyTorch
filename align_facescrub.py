@@ -11,11 +11,12 @@ if __name__ == "__main__":
         with open(anno_file, 'r') as fp:
             lines = fp.readlines()
 
-            for line in lines:
+            for line in lines[1:]:
                 tokens = line.split('\t')
                 name = tokens[0]
                 face_id = tokens[2]
                 url = tokens[3]
+                print(ext)
                 ext = url.split('.')[-1]
                 print(ext)
                 break
