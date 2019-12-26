@@ -6,10 +6,6 @@ import cv2 as cv
 import tqdm
 from tqdm import tqdm
 
-from retinaface.detector import RetinafaceDetector
-
-detector = RetinafaceDetector(net='re50')
-
 
 def resize(img):
     max_size = 600
@@ -27,6 +23,9 @@ def resize(img):
 
 def detect_face(data):
     from utils import select_significant_face, align_face
+    from retinaface.detector import RetinafaceDetector
+
+    detector = RetinafaceDetector(net='re50')
 
     src_path = data['src_path']
     dst_path = data['dst_path']
