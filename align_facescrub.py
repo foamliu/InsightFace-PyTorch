@@ -102,9 +102,6 @@ def detect_face(data):
 
     cv.rectangle(img, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
     for bbox in bboxes:
-        bbox[2] = bbox[0] + bbox[2]
-        bbox[3] = bbox[1] + bbox[3]
-
         cv.rectangle(img, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
 
     _, fname = os.path.split(src_path)
