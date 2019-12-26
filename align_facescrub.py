@@ -1,23 +1,22 @@
 import argparse
 import os
-from multiprocessing import Pool
 
 import cv2 as cv
-from tqdm import tqdm
 
 
 def resize(img):
     max_size = 600
+    ratio = 1
     h, w = img.shape[:2]
-    if h <= max_size and w <= max_size:
-        return img
-    if h > w:
-        ratio = max_size / h
-    else:
-        ratio = max_size / w
 
-    img = cv.resize(img, (int(round(w * ratio)), int(round(h * ratio))))
-    return img
+    if h > max_size or w > max_size:
+        if h > w:
+            ratio = max_size / h
+        else:
+            ratio = max_size / w
+
+        img = cv.resize(img, (int(round(w * ratio)), int(round(h * ratio))))
+    return img, ratio
 
 
 def get_files():
@@ -90,7 +89,6 @@ def select_face(bboxes, boxB):
 
 
 def detect_face(data):
-    from utils import align_face
     from retinaface.detector import detector
 
     src_path = data['src_path']
@@ -98,6 +96,8 @@ def detect_face(data):
     boxB = data['boxB']
 
     img = cv.imread(src_path)
+    img, ratio = resize(img)
+    boxB[0], boxB[1], boxB[2], boxB[3] = boxB[0] * ratio, boxB[1] * ratio, boxB[2] * ratio, boxB[3] * ratio
     bboxes, landmarks = detector.detect_faces(img)
 
     cv.rectangle(img, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
@@ -108,7 +108,6 @@ def detect_face(data):
     filename = 'test/' + fname
     cv.imwrite(filename, img)
 
-
     # if len(bboxes) > 0:
     #     i = select_face(bboxes, boxB)
     #     bbox, landms = bboxes[i], landmarks[i]
@@ -116,7 +115,6 @@ def detect_face(data):
     #     dirname = os.path.dirname(dst_path)
     #     os.makedirs(dirname, exist_ok=True)
     #     cv.imwrite(dst_path, img)
-
 
     return True
 
