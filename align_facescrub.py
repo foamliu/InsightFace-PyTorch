@@ -1,6 +1,14 @@
 import os
-
+from collections import Counter
 if __name__ == "__main__":
+    cnt = Counter()
+    for dirName, subdirList, fileList in os.walk('megaface/FaceScrub'):
+        for fname in fileList:
+            name, ext = os.path.splitext(fname)
+            cnt[ext] += 1
+    print(cnt)
+
+
     annotation_files = ['facescrub_actors.txt', 'facescrub_actresses.txt']
 
     samples = []
