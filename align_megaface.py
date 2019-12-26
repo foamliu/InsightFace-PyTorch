@@ -48,7 +48,7 @@ def detect_face(data):
     return True
 
 
-def megaface_align(src, dst, size):
+def align_megaface(src, dst, size):
     image_paths = []
     for dirName, subdirList, fileList in tqdm(os.walk(src)):
         for fname in fileList:
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     dst = args.dst
     size = args.size
 
-    megaface_align(src, dst, size)
+    align_megaface(src, dst, size)
 
     # megaface_align('megaface/MegaFace', 'megaface/MegaFace_aligned')
     # megaface_align('megaface/FaceScrub', 'megaface/FaceScrub_aligned')
