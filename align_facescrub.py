@@ -4,6 +4,7 @@ from multiprocessing import Pool
 
 import cv2 as cv
 import numpy as np
+from tqdm import tqdm
 
 
 def resize(img):
