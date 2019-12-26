@@ -16,9 +16,9 @@ if __name__ == "__main__":
                 name = tokens[0]
                 face_id = tokens[2]
                 url = tokens[3]
-                print(url)
+                # print(url)
                 ext = url.split('.')[-1]
-                print(ext)
+                # print(ext)
 
                 bbox = tokens[4]
                 filename = '{0}_{1}.{2}'.format(name, face_id, ext)
