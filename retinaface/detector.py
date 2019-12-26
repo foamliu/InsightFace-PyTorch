@@ -83,4 +83,4 @@ class RetinafaceDetector:
         return dets, landms
 
 
-detector = RetinafaceDetector(net='mnet')
+detector = RetinafaceDetector(net='re50')
