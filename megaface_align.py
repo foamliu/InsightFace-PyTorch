@@ -25,7 +25,7 @@ def resize(img):
     return img
 
 
-def detect_face(detector, data):
+def detect_face(data):
     from utils import select_significant_face, align_face
 
     src_path = data['src_path']
