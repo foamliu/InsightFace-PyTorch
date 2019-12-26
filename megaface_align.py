@@ -96,5 +96,5 @@ if __name__ == '__main__':
     # megaface_align('megaface/MegaFace', 'megaface/MegaFace_aligned')
     # megaface_align('megaface/FaceScrub', 'megaface/FaceScrub_aligned')
 
-    # CUDA_VISIBLE_DEVICES=0 python3 megaface_align.py --src megaface/MegaFace --dst megaface/MegaFace_aligned
-    # CUDA_VISIBLE_DEVICES=1 python3 megaface_align.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned --pool 1
+    # python3 megaface_align.py --src megaface/MegaFace --dst megaface/MegaFace_aligned
+    # python3 megaface_align.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
