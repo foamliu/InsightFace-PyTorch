@@ -1,9 +1,14 @@
 import argparse
 import os
+from multiprocessing import Pool
 
 import cv2 as cv
 import tqdm
 from tqdm import tqdm
+
+from retinaface.detector import RetinafaceDetector
+
+detector = RetinafaceDetector(net='re50')
 
 
 def resize(img):
@@ -30,7 +35,7 @@ def detect_face(detector, data):
     if img_raw is not None:
         img = resize(img_raw)
         try:
-            bboxes, landmarks = detector.detect_faces(img, min_face_size=100.0)
+            bboxes, landmarks = detector.detect_faces(img, confidence_threshold=0.9)
 
             if len(bboxes) > 0:
                 i = select_significant_face(bboxes)
@@ -59,14 +64,11 @@ def megaface_align(src, dst, size):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    from mtcnn.detector import Detector
-    detector = Detector()
+    with Pool(size) as p:
+        r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    # with Pool(size) as p:
-    #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
-
-    for image_path in tqdm(image_paths):
-        detect_face(detector, image_path)
+    # for image_path in tqdm(image_paths):
+    #     detect_face(detector, image_path)
 
     print('Completed!')
 

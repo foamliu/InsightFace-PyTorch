@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import torch
 
-from retinaface.data import cfg_mnet
+from retinaface.data import cfg_mnet, cfg_re50
 from retinaface.models.retinaface import RetinaFace
 
 
@@ -26,10 +26,15 @@ def remove_prefix(state_dict, prefix):
     return {f(key): value for key, value in state_dict.items()}
 
 
-def load_model():
-    pretrained_path = 'retinaface/weights/mobilenet0.25_Final.pth'
-    # print('Loading pretrained model from {}'.format(pretrained_path))
-    model = RetinaFace(cfg=cfg_mnet, phase='test')
+def load_model(net='mnet'):
+    if net == 'mnet':
+        pretrained_path = 'retinaface/weights/mobilenet0.25_Final.pth'
+        # print('Loading pretrained model from {}'.format(pretrained_path))
+        model = RetinaFace(cfg=cfg_mnet, phase='test')
+    else:
+        pretrained_path = 'retinaface/weights/Resnet50_Final.pth'
+        # print('Loading pretrained model from {}'.format(pretrained_path))
+        model = RetinaFace(cfg=cfg_re50, phase='test')
 
     device = torch.cuda.current_device()
     pretrained_dict = torch.load(pretrained_path, map_location=lambda storage, loc: storage.cuda(device))
