@@ -25,7 +25,7 @@ if __name__ == "__main__":
                 name = tokens[0]
                 face_id = tokens[2]
                 bbox = tokens[4]
-                for ext in ['jpg', 'jpeg', 'png']:
+                for ext in ['JPG', 'JPEG', 'PNG', 'GIF']:
                     filename = 'megaface/FaceScrub/{0}/{0}_{1}.{2}'.format(name, face_id, ext)
                     if os.path.isfile(filename):
                         samples.append({'name': name, 'face_id': face_id, 'bbox': bbox, 'ext': ext})
