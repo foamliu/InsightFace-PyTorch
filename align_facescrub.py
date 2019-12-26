@@ -23,7 +23,7 @@ if __name__ == "__main__":
                 bbox = tokens[4]
                 filename = '{0}_{1}.{2}'.format(name, face_id, ext)
                 full_path = 'megaface/FaceScrub/{0}/{1}'.format(name, filename)
-                if os.path.isfile(filename):
+                if os.path.isfile(full_path):
                     samples.append({'name': name, 'face_id': face_id, 'bbox': bbox, 'ext': ext})
                     break
 
