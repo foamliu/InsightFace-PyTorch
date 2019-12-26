@@ -25,6 +25,5 @@ if __name__ == "__main__":
                 full_path = 'megaface/FaceScrub/{0}/{1}'.format(name, filename)
                 if os.path.isfile(full_path):
                     samples.append({'name': name, 'face_id': face_id, 'bbox': bbox, 'ext': ext})
-                    break
 
     print(len(samples))
