@@ -93,7 +93,7 @@ def detect_face(data):
 
     src_path = data['src_path']
     dst_path = data['dst_path']
-    boxB = data['boxB']
+    boxB = list(data['boxB'])
 
     img = cv.imread(src_path)
     img, ratio = resize(img)
