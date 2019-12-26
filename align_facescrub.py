@@ -16,7 +16,7 @@ if __name__ == "__main__":
                 name = tokens[0]
                 face_id = tokens[2]
                 url = tokens[3]
-                print(ext)
+                print(url)
                 ext = url.split('.')[-1]
                 print(ext)
                 break
