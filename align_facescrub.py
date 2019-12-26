@@ -94,13 +94,12 @@ def detect_face(data):
 
     src_path = data['src_path']
     dst_path = data['dst_path']
-    boxB = np.array(data['boxB'], dtype=np.int)
+    boxB = np.array(data['boxB'])
 
     img = cv.imread(src_path)
     img, ratio = resize(img)
     boxB = boxB * ratio
-    print(boxB[0])
-
+    boxB = boxB.astype(np.int)
 
     bboxes, landmarks = detector.detect_faces(img)
 
