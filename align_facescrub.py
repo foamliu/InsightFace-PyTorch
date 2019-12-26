@@ -104,8 +104,14 @@ def detect_face(data):
     bboxes, landmarks = detector.detect_faces(img)
 
     cv.rectangle(img, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
-    for bbox in bboxes:
-        cv.rectangle(img, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
+    for boxA in bboxes:
+        cv.rectangle(img, (boxA[0], boxA[1]), (boxA[2], boxA[3]), (0, 255, 0), 2)
+        iou = bb_intersection_over_union(boxA, boxB)
+        text = "{:.4f}".format(iou)
+        cx = boxA[0]
+        cy = boxA[1] + 12
+        cv.putText(img, text, (cx, cy),
+                   cv.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255))
 
     _, fname = os.path.split(src_path)
     filename = 'test/' + fname
