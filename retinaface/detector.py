@@ -81,3 +81,6 @@ class RetinafaceDetector:
         # print(landms.shape)
 
         return dets, landms
+
+
+detector = RetinafaceDetector(net='re50')
