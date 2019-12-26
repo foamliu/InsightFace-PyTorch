@@ -64,9 +64,9 @@ def train_net(args):
 
     # Loss function
     if args.focal_loss:
-        criterion = FocalLoss(gamma=args.gamma).to(device)
+        criterion = FocalLoss(gamma=args.gamma)
     else:
-        criterion = nn.CrossEntropyLoss().to(device)
+        criterion = nn.CrossEntropyLoss()
 
     # Custom dataloaders
     train_dataset = ArcFaceDataset('train')
