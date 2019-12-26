@@ -99,6 +99,8 @@ def detect_face(data):
     img = cv.imread(src_path)
     img, ratio = resize(img)
     boxB = boxB * ratio
+    print(boxB)
+
     bboxes, landmarks = detector.detect_faces(img)
 
     cv.rectangle(img, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
