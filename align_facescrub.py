@@ -134,6 +134,7 @@ def align_facescrub(src, dst):
     #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
     for image_path in image_paths:
+        print(image_path)
         detect_face(image_path)
         # break
 
