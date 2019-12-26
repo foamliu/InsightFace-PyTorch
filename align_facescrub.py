@@ -69,6 +69,7 @@ def bb_intersection_over_union(boxA, boxB):
     # area and dividing it by the sum of prediction + ground-truth
     # areas - the interesection area
     iou = interArea / float(boxAArea + boxBArea - interArea)
+    print(iou)
 
     # return the intersection over union value
     return iou
@@ -91,39 +92,27 @@ def select_face(bboxes, boxB):
 
 def detect_face(data):
     from retinaface.detector import detector
+    from utils import align_face
 
     src_path = data['src_path']
     dst_path = data['dst_path']
     boxB = np.array(data['boxB'])
 
     img = cv.imread(src_path)
-    img, ratio = resize(img)
-    boxB = boxB * ratio
-    boxB = boxB.astype(np.int)
+    if img is not None:
+        img, ratio = resize(img)
+        boxB = boxB * ratio
+        # boxB = boxB.astype(np.int)
 
-    bboxes, landmarks = detector.detect_faces(img)
+        bboxes, landmarks = detector.detect_faces(img)
 
-    cv.rectangle(img, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
-    for boxA in bboxes:
-        cv.rectangle(img, (boxA[0], boxA[1]), (boxA[2], boxA[3]), (0, 255, 0), 2)
-        iou = bb_intersection_over_union(boxA, boxB)
-        text = "{:.4f}".format(iou)
-        cx = int(boxA[0])
-        cy = int(boxA[1]) + 12
-        cv.putText(img, text, (cx, cy),
-                   cv.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255))
-
-    _, fname = os.path.split(src_path)
-    filename = 'test/' + fname
-    cv.imwrite(filename, img)
-
-    # if len(bboxes) > 0:
-    #     i = select_face(bboxes, boxB)
-    #     bbox, landms = bboxes[i], landmarks[i]
-    #     img = align_face(img, [landms])
-    #     dirname = os.path.dirname(dst_path)
-    #     os.makedirs(dirname, exist_ok=True)
-    #     cv.imwrite(dst_path, img)
+        if len(bboxes) > 0:
+            i = select_face(bboxes, boxB)
+            bbox, landms = bboxes[i], landmarks[i]
+            img = align_face(img, [landms])
+            dirname = os.path.dirname(dst_path)
+            os.makedirs(dirname, exist_ok=True)
+            cv.imwrite(dst_path, img)
 
     return True
 
@@ -144,7 +133,7 @@ def align_facescrub(src, dst):
     # with Pool(2) as p:
     #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    for image_path in image_paths[:100]:
+    for image_path in image_paths:
         detect_face(image_path)
         # break
 
