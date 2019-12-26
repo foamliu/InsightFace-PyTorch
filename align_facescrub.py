@@ -100,7 +100,7 @@ def detect_face(data):
     if img_raw is not None:
         img = resize(img_raw)
         try:
-            bboxes, landmarks = detector.detect_faces(img, confidence_threshold=0.9)
+            bboxes, landmarks = detector.detect_faces(img)
 
             if len(bboxes) > 0:
                 i = select_face(bboxes, boxB)
@@ -111,6 +111,8 @@ def detect_face(data):
                 cv.imwrite(dst_path, img)
 
         except ValueError as err:
+            print(err)
+        except cv.error as err:
             print(err)
 
     return True
