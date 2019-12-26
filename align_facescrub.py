@@ -17,11 +17,14 @@ if __name__ == "__main__":
                 face_id = tokens[2]
                 url = tokens[3]
                 ext = url.split('.')[-1]
+                print(ext)
+                break
                 bbox = tokens[4]
                 filename = '{0}_{1}.{2}'.format(name, face_id, ext)
                 full_path = 'megaface/FaceScrub/{0}/{1}'.format(name, filename)
                 if os.path.isfile(filename):
                     samples.append({'name': name, 'face_id': face_id, 'bbox': bbox, 'ext': ext})
                     break
+        break
 
     print(len(samples))
