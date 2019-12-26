@@ -93,5 +93,5 @@ if __name__ == '__main__':
     # megaface_align('megaface/MegaFace', 'megaface/MegaFace_aligned')
     # megaface_align('megaface/FaceScrub', 'megaface/FaceScrub_aligned')
 
-    # python3 megaface_align.py --src megaface/MegaFace --dst megaface/MegaFace_aligned
-    # python3 megaface_align.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
+    # python3 align_megaface.py --src megaface/MegaFace --dst megaface/MegaFace_aligned
+    # python3 align_megaface.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
