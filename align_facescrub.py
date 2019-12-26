@@ -140,8 +140,8 @@ def align_facescrub(src, dst):
 def parse_args():
     parser = argparse.ArgumentParser(description='Train face network')
     # general
-    parser.add_argument('--src', type=str, default='megaface/MegaFace', help='src path')
-    parser.add_argument('--dst', type=str, default='megaface/MegaFace_aligned', help='dst path')
+    parser.add_argument('--src', type=str, default='megaface/FaceScrub', help='src path')
+    parser.add_argument('--dst', type=str, default='megaface/FaceScrub_aligned', help='dst path')
 
     args = parser.parse_args()
     return args
