@@ -97,33 +97,29 @@ def detect_face(data):
     dst_path = data['dst_path']
     boxB = data['boxB']
 
-    img_raw = cv.imread(src_path)
-    # cv.rectangle(img_raw, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
-    # cv.imshow('', img_raw)
-    # cv.waitKey(0)
+    img = cv.imread(src_path)
+    bboxes, landmarks = detector.detect_faces(img)
 
-    if img_raw is not None:
-        # img = resize(img_raw)
-        img = img_raw
-        try:
-            bboxes, landmarks = detector.detect_faces(img)
+    cv.rectangle(img, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
+    for bbox in bboxes:
+        bbox[2] = bbox[0] + bbox[2]
+        bbox[3] = bbox[1] + bbox[3]
 
-            for bbox in bboxes:
-                bbox[2] = bbox[0] + bbox[2]
-                bbox[3] = bbox[1] + bbox[3]
+        cv.rectangle(img, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
 
-            if len(bboxes) > 0:
-                i = select_face(bboxes, boxB)
-                bbox, landms = bboxes[i], landmarks[i]
-                img = align_face(img, [landms])
-                dirname = os.path.dirname(dst_path)
-                os.makedirs(dirname, exist_ok=True)
-                cv.imwrite(dst_path, img)
+    _, fname = os.path.split(src_path)
+    filename = 'test/' + fname
+    cv.imwrite(filename, img)
 
-        except ValueError as err:
-            print(err)
-        except cv.error as err:
-            print(err)
+
+    # if len(bboxes) > 0:
+    #     i = select_face(bboxes, boxB)
+    #     bbox, landms = bboxes[i], landmarks[i]
+    #     img = align_face(img, [landms])
+    #     dirname = os.path.dirname(dst_path)
+    #     os.makedirs(dirname, exist_ok=True)
+    #     cv.imwrite(dst_path, img)
+
 
     return True
 
@@ -144,7 +140,7 @@ def align_facescrub(src, dst):
     # with Pool(2) as p:
     #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    for image_path in image_paths:
+    for image_path in image_paths[:10]:
         detect_face(image_path)
         # break
 
