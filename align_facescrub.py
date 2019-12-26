@@ -152,8 +152,7 @@ if __name__ == '__main__':
 
     src = args.src
     dst = args.dst
-    size = args.size
 
-    align_facescrub(src, dst, size)
+    align_facescrub(src, dst)
 
     # python3 align_megaface.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
