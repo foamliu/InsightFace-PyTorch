@@ -108,8 +108,8 @@ def detect_face(data):
         cv.rectangle(img, (boxA[0], boxA[1]), (boxA[2], boxA[3]), (0, 255, 0), 2)
         iou = bb_intersection_over_union(boxA, boxB)
         text = "{:.4f}".format(iou)
-        cx = boxA[0]
-        cy = boxA[1] + 12
+        cx = int(boxA[0])
+        cy = int(boxA[1]) + 12
         cv.putText(img, text, (cx, cy),
                    cv.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255))
 
