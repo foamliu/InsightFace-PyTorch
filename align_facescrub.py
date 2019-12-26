@@ -99,7 +99,8 @@ def detect_face(data):
 
     img_raw = cv.imread(src_path)
     if img_raw is not None:
-        img = resize(img_raw)
+        # img = resize(img_raw)
+        img = img_raw
         try:
             bboxes, landmarks = detector.detect_faces(img)
 
