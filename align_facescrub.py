@@ -2,6 +2,7 @@ import argparse
 import os
 
 import cv2 as cv
+import numpy as np
 
 
 def resize(img):
@@ -93,11 +94,11 @@ def detect_face(data):
 
     src_path = data['src_path']
     dst_path = data['dst_path']
-    boxB = list(data['boxB'])
+    boxB = np.array(data['boxB'])
 
     img = cv.imread(src_path)
     img, ratio = resize(img)
-    boxB[0], boxB[1], boxB[2], boxB[3] = boxB[0] * ratio, boxB[1] * ratio, boxB[2] * ratio, boxB[3] * ratio
+    boxB = boxB * ratio
     bboxes, landmarks = detector.detect_faces(img)
 
     cv.rectangle(img, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
