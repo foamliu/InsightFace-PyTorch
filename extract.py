@@ -14,7 +14,5 @@ if __name__ == "__main__":
     # if not os.path.isdir('data/faces_ms1m_112x112'):
     #     extract('data/faces_ms1m_112x112.zip')
 
-    if not os.path.isdir('data/faces_emore'):
-        extract('data/faces_emore.zip')
-
-
+    if not os.path.isdir('data/ms1m-retinaface-t1'):
+        extract('data/ms1m-retinaface-t1.zip')
