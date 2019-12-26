@@ -98,24 +98,30 @@ def detect_face(data):
     boxB = data['boxB']
 
     img_raw = cv.imread(src_path)
-    if img_raw is not None:
-        # img = resize(img_raw)
-        img = img_raw
-        try:
-            bboxes, landmarks = detector.detect_faces(img)
+    cv.rectangle(img_raw, (boxB[0], boxB[1]), (boxB[2], boxB[3]), (0, 0, 255), 2)
+    cv.imshow('', img_raw)
+    cv.waitKey(0)
 
-            if len(bboxes) > 0:
-                i = select_face(bboxes, boxB)
-                bbox, landms = bboxes[i], landmarks[i]
-                img = align_face(img, [landms])
-                dirname = os.path.dirname(dst_path)
-                os.makedirs(dirname, exist_ok=True)
-                cv.imwrite(dst_path, img)
-
-        except ValueError as err:
-            print(err)
-        except cv.error as err:
-            print(err)
+    #
+    #
+    # if img_raw is not None:
+    #     # img = resize(img_raw)
+    #     img = img_raw
+    #     try:
+    #         bboxes, landmarks = detector.detect_faces(img)
+    #
+    #         if len(bboxes) > 0:
+    #             i = select_face(bboxes, boxB)
+    #             bbox, landms = bboxes[i], landmarks[i]
+    #             img = align_face(img, [landms])
+    #             dirname = os.path.dirname(dst_path)
+    #             os.makedirs(dirname, exist_ok=True)
+    #             cv.imwrite(dst_path, img)
+    #
+    #     except ValueError as err:
+    #         print(err)
+    #     except cv.error as err:
+    #         print(err)
 
     return True
 
@@ -133,12 +139,12 @@ def align_facescrub(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    with Pool(2) as p:
-        r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
+    # with Pool(2) as p:
+    #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    # for image_path in image_paths:
-    #     detect_face(image_path)
-    #     break
+    for image_path in image_paths:
+        detect_face(image_path)
+        # break
 
     print('Completed!')
 
