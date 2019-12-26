@@ -80,9 +80,10 @@ def select_face(bboxes, boxB):
 
     for idx, boxA in enumerate(bboxes):
         iou = bb_intersection_over_union(boxA, boxB)
-        # print(iou)
+        print(iou)
+
         if iou > max_iou:
-            max_iou = iou
+            max_iou = max(iou, max_iou)
             max_idx = idx
 
     return max_idx
