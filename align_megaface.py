@@ -91,8 +91,7 @@ if __name__ == '__main__':
 
     src = args.src
     dst = args.dst
-    size = args.size
 
-    align_megaface(src, dst, size)
+    align_megaface(src, dst)
 
     # python3 align_megaface.py --src megaface/MegaFace --dst megaface/MegaFace_aligned
