@@ -1,12 +1,13 @@
 import argparse
 import os
 
-
 import cv2 as cv
 import tqdm
 from tqdm import tqdm
 
 from config import im_size
+from retinaface.detector import detector
+from utils import select_significant_face, align_face
 
 
 def resize(img):
@@ -24,9 +25,6 @@ def resize(img):
 
 
 def detect_face(data):
-    from utils import select_significant_face, align_face
-    from retinaface.detector import detector
-
     src_path = data['src_path']
     dst_path = data['dst_path']
 
@@ -68,12 +66,12 @@ def align_megaface(src, dst, size):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    # from multiprocessing import Pool
-    # with Pool(size) as p:
-    #     r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
+    from multiprocessing import Pool
+    with Pool(size) as p:
+        r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
-    for image_path in tqdm(image_paths):
-        detect_face(image_path)
+    # for image_path in tqdm(image_paths):
+    #     detect_face(image_path)
 
     print('Completed!')
 
