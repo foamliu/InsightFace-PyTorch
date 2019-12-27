@@ -67,7 +67,7 @@ def align_megaface(src, dst):
     print('num_images: ' + str(num_images))
 
     from multiprocessing import Pool
-    with Pool(4) as p:
+    with Pool(2) as p:
         r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
     # for image_path in tqdm(image_paths):
