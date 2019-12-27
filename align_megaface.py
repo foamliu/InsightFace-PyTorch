@@ -24,7 +24,7 @@ def resize(img):
 
 def detect_face(data):
     from retinaface.detector import detector
-    from utils import select_significant_face, align_face
+    from utils import align_face
 
     src_path = data['src_path']
     dst_path = data['dst_path']
@@ -36,8 +36,7 @@ def detect_face(data):
             bboxes, landmarks = detector.detect_faces(img, confidence_threshold=0.9)
 
             if len(bboxes) > 0:
-                i = select_significant_face(bboxes)
-                bbox, landms = bboxes[i], landmarks[i]
+                bbox, landms = bboxes[0], landmarks[0]
                 img = align_face(img, [landms])
                 dirname = os.path.dirname(dst_path)
                 os.makedirs(dirname, exist_ok=True)
@@ -54,7 +53,7 @@ def detect_face(data):
     return False
 
 
-def align_megaface(src, dst, size):
+def align_megaface(src, dst):
     image_paths = []
     for dirName, subdirList, fileList in tqdm(os.walk(src)):
         for fname in fileList:
@@ -68,7 +67,7 @@ def align_megaface(src, dst, size):
     print('num_images: ' + str(num_images))
 
     from multiprocessing import Pool
-    with Pool(size) as p:
+    with Pool(4) as p:
         r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
 
     # for image_path in tqdm(image_paths):
@@ -82,7 +81,6 @@ def parse_args():
     # general
     parser.add_argument('--src', type=str, default='megaface/MegaFace', help='src path')
     parser.add_argument('--dst', type=str, default='megaface/MegaFace_aligned', help='dst path')
-    parser.add_argument('--size', type=int, default=4, help='processes')
 
     args = parser.parse_args()
     return args
