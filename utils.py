@@ -91,12 +91,12 @@ def align_face(raw, facial5points):
     # raw = cv.imread(img_fn, True)  # BGR
     facial5points = np.reshape(facial5points, (2, 5))
 
-    crop_size = (image_h, im_size)
+    crop_size = (im_size, im_size)
 
     default_square = True
     inner_padding_factor = 0.25
     outer_padding = (0, 0)
-    output_size = (image_h, im_size)
+    output_size = (im_size, im_size)
 
     # get the reference 5 landmarks position in the crop settings
     reference_5pts = get_reference_facial_points(
