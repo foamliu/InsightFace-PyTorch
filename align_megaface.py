@@ -41,11 +41,15 @@ def detect_face(data):
                 dirname = os.path.dirname(dst_path)
                 os.makedirs(dirname, exist_ok=True)
                 cv.imwrite(dst_path, img)
+                return True
 
         except ValueError as err:
             print(err)
 
-    return True
+        cv.imwrite(dst_path, img)
+        return False
+
+    return False
 
 
 def align_megaface(src, dst, size):
