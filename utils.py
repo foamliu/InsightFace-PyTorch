@@ -8,7 +8,7 @@ import torch
 from PIL import Image
 
 from align_faces import get_reference_facial_points, warp_and_crop_face
-from config import image_h, image_w
+from config import im_size
 from retinaface.detector import detector
 
 
@@ -91,12 +91,12 @@ def align_face(raw, facial5points):
     # raw = cv.imread(img_fn, True)  # BGR
     facial5points = np.reshape(facial5points, (2, 5))
 
-    crop_size = (image_h, image_w)
+    crop_size = (image_h, im_size)
 
     default_square = True
     inner_padding_factor = 0.25
     outer_padding = (0, 0)
-    output_size = (image_h, image_w)
+    output_size = (image_h, im_size)
 
     # get the reference 5 landmarks position in the crop settings
     reference_5pts = get_reference_facial_points(

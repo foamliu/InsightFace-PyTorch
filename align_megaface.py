@@ -6,6 +6,8 @@ import cv2 as cv
 import tqdm
 from tqdm import tqdm
 
+from config import im_size
+
 
 def resize(img):
     max_size = 600
@@ -46,6 +48,7 @@ def detect_face(data):
         except ValueError as err:
             print(err)
 
+        img = cv.resize(img, (im_size, im_size))
         cv.imwrite(dst_path, img)
         return False
 
