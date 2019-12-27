@@ -6,8 +6,6 @@ import tqdm
 from tqdm import tqdm
 
 from config import im_size
-from retinaface.detector import detector
-from utils import select_significant_face, align_face
 
 
 def resize(img):
@@ -25,6 +23,9 @@ def resize(img):
 
 
 def detect_face(data):
+    from retinaface.detector import detector
+    from utils import select_significant_face, align_face
+
     src_path = data['src_path']
     dst_path = data['dst_path']
 
