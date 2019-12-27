@@ -51,7 +51,7 @@ $ python pre_process.py
 ```
 
 Image alignment:
-1. Face detection(MTCNN).
+1. Face detection(Retinaface mobilenet0.25).
 2. Face alignment(similar transformation).
 3. Central face selection.
 4. Resize -> 112x112. 
@@ -80,7 +80,7 @@ $ tensorboard --logdir=runs
  
 #### Introduction
  
-MegaFace dataset includes 1,027,060 faces, 690,572 identities. [Link](http://megaface.cs.washington.edu/)
+[MegaFace](http://megaface.cs.washington.edu/) dataset includes 1,027,060 faces, 690,572 identities.
  
 Challenge 1 is taken to test our model with 1 million distractors. 
 
@@ -89,10 +89,27 @@ Challenge 1 is taken to test our model with 1 million distractors.
 #### Download
 
 1. Download MegaFace and FaceScrub Images
-2. Download Linux DevKit from [MagaFace WebSite](http://megaface.cs.washington.edu/) then extract to megaface folder:
+2. Download FaceScrub annotation files:
+    - facescrub_actors.txt
+    - facescrub_actresses.txt
+3. Download Linux DevKit from [MagaFace WebSite](http://megaface.cs.washington.edu/) then extract to megaface folder:
 
 ```bash
 $ tar -vxf linux-devkit.tar.gz
+```
+
+#### Face Alignment
+
+1. Align Megaface images:
+
+```bash
+$ python3 align_megaface.py
+```
+
+2. Align FaceScrub images with annotations:
+
+```bash
+$ python3 align_facescrub.py
 ```
 
 #### Evaluation
@@ -102,11 +119,10 @@ $ python3 megaface_eval.py
 ```
 
 It does following things:
-1. Crop MegaFace.
-2. Generate features for FaceScrub and MegaFace.
-3. Remove noises. 
+1. Generate features for FaceScrub and MegaFace.
+2. Remove noises. 
 <br>Note: we used the noises list proposed by InsightFace, at https://github.com/deepinsight/insightface.
-4. Start MegaFace evaluation through devkit. 
+3. Start MegaFace evaluation through devkit. 
 
 #### Results
 
