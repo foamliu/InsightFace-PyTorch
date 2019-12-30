@@ -1,6 +1,10 @@
 # InsightFace
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![HitCount](http://hits.dwyl.io/foamliu/Deep-Image-Matting-PyTorch.svg)](http://hits.dwyl.io/foamliu/Deep-Image-Matting-PyTorch)
+![stars](https://img.shields.io/github/stars/foamliu/Deep-Image-Matting-PyTorch.svg?style=flat)
+![GitHub issues](https://img.shields.io/github/issues/foamliu/Deep-Image-Matting-PyTorch.svg)
+![GitHub repo size](https://img.shields.io/github/repo-size/foamliu/Deep-Image-Matting-PyTorch.svg)
 
-![apm](https://img.shields.io/apm/l/vim-mode.svg)
 
 PyTorch implementation of Additive Angular Margin Loss for Deep Face Recognition.
 [paper](https://arxiv.org/pdf/1801.07698.pdf).
