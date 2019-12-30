@@ -47,7 +47,7 @@ def train_net(args):
             optimizer = torch.optim.Adam([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
                                          lr=args.lr, weight_decay=args.weight_decay)
 
-        scheduler = MultiStepLR(optimizer, milestones=[10, 20, 30, 40], gamma=0.1)
+        scheduler = MultiStepLR(optimizer, milestones=[5, 10, 15, 20], gamma=0.1)
 
     else:
         checkpoint = torch.load(checkpoint)
