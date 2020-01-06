@@ -70,11 +70,16 @@ def train_net(args):
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
                                                num_workers=num_workers)
 
-    scheduler = MultiStepLR(optimizer, milestones=[10, 20, 30, 40], gamma=0.1)
+    scheduler = MultiStepLR(optimizer, milestones=[5, 10, 20, 30], gamma=0.1)
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
         scheduler.step(epoch)
+
+        lr = optimizer.param_groups[0]['lr']
+        logger.info('\nCurrent effective learning rate: {}\n'.format(lr))
+        # print('Step num: {}\n'.format(optimizer.step_num))
+        writer.add_scalar('model/learning_rate', lr, epoch)
 
         # One epoch's training
         train_loss, train_top1_accs = train(train_loader=train_loader,
@@ -83,13 +88,9 @@ def train_net(args):
                                             criterion=criterion,
                                             optimizer=optimizer,
                                             epoch=epoch)
-        lr = optimizer.param_groups[0]['lr']
-        logger.info('\nCurrent effective learning rate: {}\n'.format(lr))
-        # print('Step num: {}\n'.format(optimizer.step_num))
 
         writer.add_scalar('model/train_loss', train_loss, epoch)
         writer.add_scalar('model/train_accuracy', train_top1_accs, epoch)
-        writer.add_scalar('model/learning_rate', lr, epoch)
 
         # One epoch's validation
         megaface_acc = megaface_test(model)
