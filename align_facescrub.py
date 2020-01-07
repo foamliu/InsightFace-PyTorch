@@ -1,14 +1,15 @@
 import argparse
 import os
-from multiprocessing import Pool
 import re
+from multiprocessing import Pool
+
 import cv2 as cv
 import numpy as np
 from tqdm import tqdm
 
 
 def resize(img):
-    max_size = 600
+    max_size = 800
     ratio = 1
     h, w = img.shape[:2]
 
@@ -103,7 +104,6 @@ def detect_face(data):
     if img is not None:
         img, ratio = resize(img)
         boxB = boxB * ratio
-        # boxB = boxB.astype(np.int)
 
         try:
             bboxes, landmarks = detector.detect_faces(img)
@@ -138,13 +138,8 @@ def align_facescrub(src, dst):
     num_images = len(image_paths)
     print('num_images: ' + str(num_images))
 
-    with Pool(2) as p:
+    with Pool(4) as p:
         r = list(tqdm(p.imap(detect_face, image_paths), total=num_images))
-
-    # for image_path in image_paths:
-    #     print(image_path)
-    #     detect_face(image_path)
-    #     # break
 
     print('Completed!')
 
