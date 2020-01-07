@@ -1,7 +1,7 @@
 import argparse
 import os
 from multiprocessing import Pool
-
+import re
 import cv2 as cv
 import numpy as np
 from tqdm import tqdm
@@ -130,6 +130,8 @@ def align_facescrub(src, dst):
         boxB = eval(sample['bbox'])
         src_path = os.path.join(src, fname)
         dst_path = os.path.join(dst, fname).replace(' ', '_')
+        pattern = re.compile(re.escape('.png'), re.IGNORECASE)
+        dst_path = pattern.sub('.jpg', dst_path)
         image_paths.append({'src_path': src_path, 'dst_path': dst_path, 'boxB': boxB})
 
     # print(image_paths[:20])
