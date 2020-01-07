@@ -122,7 +122,7 @@ def remove_noise():
     for line in open('megaface/megaface_noises.txt', 'r'):
         filename = 'megaface/MegaFace_aligned/FlickrFinal2/' + line.strip() + '_0.bin'
         if os.path.exists(filename):
-            # print(filename)
+            print(filename)
             os.remove(filename)
 
     noise = set()
@@ -130,8 +130,9 @@ def remove_noise():
         noise.add((line.strip().replace('png', 'jpg') + '0.bin').replace('_', '').replace(' ', ''))
     for root, dirs, files in os.walk('megaface/facescrub_images'):
         for f in files:
-            if f.replace('_', '').replace(' ', '') in noise:
+            if f in noise:
                 filename = os.path.join(root, f)
+                print(filename)
                 if os.path.exists(filename):
                     # print(filename)
                     os.remove(filename)
