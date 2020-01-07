@@ -188,3 +188,5 @@ if __name__ == '__main__':
         remove_noise()
     elif args.action == 'pngtojpg':
         pngtojpg('megaface/facescrub_images')
+    elif args.action == 'remove_noise':
+        remove_noise()
