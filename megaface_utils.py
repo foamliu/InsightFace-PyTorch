@@ -132,9 +132,8 @@ def remove_noise():
         for f in files:
             if f in noise:
                 filename = os.path.join(root, f)
-                print(filename)
                 if os.path.exists(filename):
-                    # print(filename)
+                    print(filename)
                     os.remove(filename)
 
 
