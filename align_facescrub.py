@@ -162,4 +162,4 @@ if __name__ == '__main__':
 
     align_facescrub(src, dst)
 
-    # python3 align_megaface.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
+    # python3 align_facescrub.py --src megaface/FaceScrub --dst megaface/FaceScrub_aligned
