@@ -131,7 +131,7 @@ def remove_noise():
 
     for root, dirs, files in os.walk('megaface/FaceScrub_aligned'):
         for f in files:
-            print(f)
+            # print(f)
             if f in noise:
                 filename = os.path.join(root, f)
                 if os.path.exists(filename):
