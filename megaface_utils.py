@@ -128,6 +128,10 @@ def remove_noise():
     noise = set()
     for line in open('megaface/facescrub_noises.txt', 'r'):
         noise.add((line.strip().replace('.png', '.jpg') + '_0.bin'))
+
+    noise = list(noise)
+    print(noise[:10])
+
     for root, dirs, files in os.walk('megaface/facescrub_images'):
         for f in files:
             if f in noise:
