@@ -132,7 +132,7 @@ def remove_noise():
     noise = list(noise)
     print(noise[:10])
 
-    for root, dirs, files in os.walk('megaface/facescrub_images'):
+    for root, dirs, files in os.walk('megaface/FaceScrub_aligned'):
         for f in files:
             if f in noise:
                 filename = os.path.join(root, f)
