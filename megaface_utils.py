@@ -129,11 +129,9 @@ def remove_noise():
     for line in open('megaface/facescrub_noises.txt', 'r'):
         noise.add((line.strip().replace('.png', '.jpg') + '_0.bin'))
 
-    noise = list(noise)
-    print(noise[:10])
-
     for root, dirs, files in os.walk('megaface/FaceScrub_aligned'):
         for f in files:
+            print(f)
             if f in noise:
                 filename = os.path.join(root, f)
                 if os.path.exists(filename):
