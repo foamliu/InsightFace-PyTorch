@@ -74,8 +74,6 @@ def train_net(args):
 
     # Epochs
     for epoch in range(start_epoch, args.end_epoch):
-        scheduler.step(epoch)
-
         lr = optimizer.param_groups[0]['lr']
         logger.info('\nCurrent effective learning rate: {}\n'.format(lr))
         # print('Step num: {}\n'.format(optimizer.step_num))
@@ -95,6 +93,8 @@ def train_net(args):
         # One epoch's validation
         megaface_acc = megaface_test(model)
         writer.add_scalar('model/megaface_accuracy', megaface_acc, epoch)
+
+        scheduler.step(epoch)
 
         # Check if there was an improvement
         is_best = megaface_acc > best_acc
