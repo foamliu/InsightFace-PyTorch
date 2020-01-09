@@ -55,6 +55,9 @@ def train_net(args):
         metric_fc = checkpoint['metric_fc']
         optimizer = checkpoint['optimizer']
 
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 1e-5
+
     # Move to GPU, if available
     model = model.to(device)
     metric_fc = metric_fc.to(device)
