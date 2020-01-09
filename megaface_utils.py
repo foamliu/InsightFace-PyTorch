@@ -142,7 +142,7 @@ def remove_noise():
                 if os.path.exists(filename):
                     # print(filename)
                     os.remove(filename)
-                    facescrub_count += 0
+                    facescrub_count += 1
 
     print('remove noise - facescrub: ' + str(facescrub_count))
 
