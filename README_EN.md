@@ -151,12 +151,3 @@ Allocating ranks (972393)
 Rank 1: <b>0.974266</b>
 
 </pre>
-
-## 小小的赞助~
-<p align="center">
-	<img src="https://github.com/foamliu/InsightFace-Pytorch/blob/master/sponsor.jpg" alt="Sample"  width="324" height="504">
-	<p align="center">
-		<em>若对您有帮助可给予小小的赞助~</em>
-	</p>
-</p>
-<br/><br/><br/>
