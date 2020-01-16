@@ -5,7 +5,6 @@ from shutil import copyfile
 import cv2 as cv
 import numpy as np
 import torch
-from PIL import Image
 
 from align_faces import get_reference_facial_points, warp_and_crop_face
 from config import im_size
@@ -109,7 +108,7 @@ def align_face(raw, facial5points):
 
 def get_face_attributes(full_path):
     try:
-        img = Image.open(full_path).convert('RGB')
+        img = cv.imread(full_path)
         bounding_boxes, landmarks = detector.detect_faces(img)
 
         if len(landmarks) > 0:
@@ -123,10 +122,10 @@ def get_face_attributes(full_path):
     return False, None
 
 
-def select_significant_face(bounding_boxes):
+def select_significant_face(bboxes):
     best_index = -1
     best_rank = float('-inf')
-    for i, b in enumerate(bounding_boxes):
+    for i, b in enumerate(bboxes):
         bbox_w, bbox_h = b[2] - b[0], b[3] - b[1]
         area = bbox_w * bbox_h
         score = b[4]
@@ -140,12 +139,12 @@ def select_significant_face(bounding_boxes):
 
 def get_central_face_attributes(full_path):
     try:
-        img = Image.open(full_path).convert('RGB')
-        bounding_boxes, landmarks = detector.detect_faces(img)
+        img = cv.imread(full_path)
+        bboxes, landmarks = detector.detect_faces(img)
 
         if len(landmarks) > 0:
-            i = select_significant_face(bounding_boxes)
-            return True, [bounding_boxes[i]], [landmarks[i]]
+            i = select_significant_face(bboxes)
+            return True, [bboxes[i]], [landmarks[i]]
 
     except KeyboardInterrupt:
         raise
@@ -157,7 +156,7 @@ def get_central_face_attributes(full_path):
 
 
 def get_all_face_attributes(full_path):
-    img = Image.open(full_path).convert('RGB')
+    img = cv.imread(full_path)
     bounding_boxes, landmarks = detector.detect_faces(img)
     return bounding_boxes, landmarks
 
