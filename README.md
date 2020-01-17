@@ -20,7 +20,7 @@ year={2018}
 
 |Models|MegaFace|LFW|Download|
 |---|---|---|---|
-|SE-LResNet101E-IR|97.43%|99.80%|[Link](https://github.com/foamliu/InsightFace-v3/releases/download/v1.0/insight-face-v3.pt)|
+|SE-LResNet101E-IR|98.06%|99.80%|[Link](https://github.com/foamliu/InsightFace-v3/releases/download/v1.0/insight-face-v3.pt)|
 
 
 ## Dataset
@@ -135,20 +135,20 @@ CMC|ROC|
 
 ##### Textual results
 <pre>
-Done matching! Score matrix size: 3379 972313
+Done matching! Score matrix size: 3359 966804
 Saving to results/otherFiles/facescrub_megaface_0_1000000_1.bin
-Loaded 3379 probes spanning 80 classes
+Loaded 3359 probes spanning 80 classes
 Loading from results/otherFiles/facescrub_facescrub_0.bin
-Probe score matrix size: 3379 3379
-distractor score matrix size: 3379 972313
+Probe score matrix size: 3359 3359
+distractor score matrix size: 3359 966804
 Done loading. Time to compute some stats!
 Finding top distractors!
 Done sorting distractor scores
 Making gallery!
 Done Making Gallery!
-Allocating ranks (972393)
+Allocating ranks (966884)
 
-Rank 1: <b>0.974266</b>
+Rank 1: <b>0.980616</b>
 
 </pre>
 
