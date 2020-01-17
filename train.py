@@ -36,6 +36,9 @@ def train_net(args):
         else:
             raise TypeError('network {} is not supported.'.format(args.network))
 
+        if args.pretrained:
+            model.load_state_dict(torch.load('insight-face-v3.pt'))
+
         model = nn.DataParallel(model)
         metric_fc = ArcMarginModel(args)
         metric_fc = nn.DataParallel(metric_fc)
