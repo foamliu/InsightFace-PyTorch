@@ -7,7 +7,7 @@ import cv2 as cv
 import numpy as np
 import torch
 import tqdm
-from PIL import Image
+from PIL import Image, ImageOps
 from tqdm import tqdm
 
 from config import device
@@ -49,11 +49,9 @@ def crop(path, oldkey, newkey):
 
 
 def get_image(transformer, filepath, flip=False):
-    img = cv.imread(filepath)
+    img = Image.open(filepath)
     if flip:
-        img = cv.flip(img, 1)
-    img = img[..., ::-1]  # RGB
-    img = Image.fromarray(img, 'RGB')  # RGB
+        img = ImageOps.flip(img)
     img = transformer(img)
     return img.to(device)
 

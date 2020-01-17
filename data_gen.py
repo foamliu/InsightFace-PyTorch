@@ -39,7 +39,7 @@ class ArcFaceDataset(Dataset):
         label = sample['label']
 
         filename = os.path.join(IMG_DIR, filename)
-        img = Image.open(filename).convert('RGB')
+        img = Image.open(filename)
         img = self.transformer(img)
 
         return img, label
