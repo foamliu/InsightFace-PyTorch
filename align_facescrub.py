@@ -19,7 +19,7 @@ def resize(img):
         else:
             ratio = max_size / w
 
-        img = cv.resize(img, (int(round(w * ratio)), int(round(h * ratio))))
+        img = cv.resize(img, (int(round(w * ratio)), int(round(h * ratio))), interpolation=cv.INTER_CUBIC)
     return img, ratio
 
 

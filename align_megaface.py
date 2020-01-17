@@ -1,12 +1,12 @@
 import argparse
 import os
-# from multiprocessing import Pool
 
 import cv2 as cv
 import tqdm
 from tqdm import tqdm
 
-from config import im_size
+
+# from multiprocessing import Pool
 
 
 def resize(img):
@@ -47,10 +47,6 @@ def detect_face(data):
 
         except ValueError as err:
             print(err)
-
-        img = cv.resize(img, (im_size, im_size))
-        cv.imwrite(dst_path, img)
-        return False
 
     return False
 
