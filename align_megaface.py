@@ -10,17 +10,18 @@ from config import im_size
 
 
 def resize(img):
-    max_size = 600
+    max_size = 800
+    ratio = 1
     h, w = img.shape[:2]
-    if h <= max_size and w <= max_size:
-        return img
-    if h > w:
-        ratio = max_size / h
-    else:
-        ratio = max_size / w
 
-    img = cv.resize(img, (int(round(w * ratio)), int(round(h * ratio))))
-    return img
+    if h > max_size or w > max_size:
+        if h > w:
+            ratio = max_size / h
+        else:
+            ratio = max_size / w
+
+        img = cv.resize(img, (int(round(w * ratio)), int(round(h * ratio))))
+    return img, ratio
 
 
 def detect_face(data):
@@ -34,7 +35,7 @@ def detect_face(data):
     if img_raw is not None:
         img = resize(img_raw)
         try:
-            bboxes, landmarks = detector.detect_faces(img, confidence_threshold=0.9)
+            bboxes, landmarks = detector.detect_faces(img)
 
             if len(bboxes) > 0:
                 bbox, landms = bboxes[0], landmarks[0]
