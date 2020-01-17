@@ -246,8 +246,8 @@ def resnet50(args, **kwargs):
 
 def resnet101(args, **kwargs):
     model = ResNet(IRBlock, [3, 4, 23, 3], use_se=args.use_se, **kwargs)
-    if args.pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
+    # if args.pretrained:
+    #     model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
     return model
 
 
