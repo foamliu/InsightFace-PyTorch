@@ -27,7 +27,7 @@ def megaface_test(model):
     cmd = 'python megaface/devkit/experiments/run_experiment.py -p megaface/devkit/templatelists/facescrub_uncropped_features_list.json megaface/MegaFace_aligned/FlickrFinal2 megaface/FaceScrub_aligned _0.bin results -s 1000000'
     # print(cmd)
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
-    print(output)
+    # print(output)
 
     lines = output.split('\n')
     line = [l for l in lines if l.startswith('Rank 1: ')][0]
