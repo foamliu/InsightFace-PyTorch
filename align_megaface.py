@@ -35,19 +35,19 @@ def detect_face(data):
     img_raw = cv.imread(src_path)
     if img_raw is not None:
         img = resize(img_raw)
-        try:
-            bboxes, landmarks = detector.detect_faces(img)
+        # try:
+        bboxes, landmarks = detector.detect_faces(img)
 
-            if len(bboxes) > 0:
-                bbox, landms = bboxes[0], landmarks[0]
-                img = align_face(img, [landms])
-                dirname = os.path.dirname(dst_path)
-                os.makedirs(dirname, exist_ok=True)
-                cv.imwrite(dst_path, img)
-                return True
+        if len(bboxes) > 0:
+            bbox, landms = bboxes[0], landmarks[0]
+            img = align_face(img, [landms])
+            dirname = os.path.dirname(dst_path)
+            os.makedirs(dirname, exist_ok=True)
+            cv.imwrite(dst_path, img)
+            return True
 
-        except ValueError as err:
-            print(err)
+        # except ValueError as err:
+        #     print(err)
 
     return False
 
