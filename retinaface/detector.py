@@ -20,7 +20,7 @@ class RetinafaceDetector:
         self.model.eval()
 
     def detect_faces(self, img_raw, confidence_threshold=0.9, top_k=5000, nms_threshold=0.4, keep_top_k=750, resize=1):
-        img = np.float32(img_raw)
+        img = img_raw.astype(np.float32)
         im_height, im_width = img.shape[:2]
         scale = torch.Tensor([img.shape[1], img.shape[0], img.shape[1], img.shape[0]])
         img -= (104, 117, 123)
