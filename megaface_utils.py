@@ -51,7 +51,7 @@ def crop(path, oldkey, newkey):
 def get_image(transformer, filepath, flip=False):
     img = Image.open(filepath)
     if flip:
-        img = ImageOps.flip(img)
+        img = ImageOps.mirror(img)
     img = transformer(img)
     return img.to(device)
 
