@@ -23,18 +23,17 @@ def train_net(args):
 
     # Initialize / load checkpoint
     if checkpoint is None:
-        if args.network == 'r18':
-            model = resnet18(args)
-        elif args.network == 'r34':
-            model = resnet34(args)
-        elif args.network == 'r50':
-            model = resnet50(args)
-        elif args.network == 'r101':
-            model = resnet101(args)
-        elif args.network == 'r152':
-            model = resnet152(args)
+        supported_networks = {
+        'r18': resnet18,
+        'r34': resnet34,
+        'r50': resnet50,
+        'r101': resnet101,
+        'r152': resnet152,
+        }
+        if args.network in supported_networks:
+            model = supported_networks[args.network](args)
         else:
-            raise TypeError('network {} is not supported.'.format(args.network))
+            raise TypeError('Network {} is not supported.'.format(args.network))
 
         if args.pretrained:
             model.load_state_dict(torch.load('insight-face-v3.pt'))
